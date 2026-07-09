@@ -1,17 +1,25 @@
-import { Router } from "server/node_modules/@types/express";
-import { getGameState } from "../services/gameService";
+import { Router } from "express";
+
+import {
+  getGameState
+} from "../services/gameService";
 
 
 const router = Router();
 
 
-router.get("/", (_, res) => {
+router.get(
+  "/",
+  (_req: any, res: any) => {
 
-  const game = getGameState();
+    const game =
+      getGameState();
 
-  res.json(game);
 
-});
+    res.json(game);
+
+  }
+);
 
 
 export default router;

@@ -1,6 +1,8 @@
 import { db } from "./connection";
 
+
 export function initializeDatabase() {
+
 
   db.exec(`
 
@@ -40,6 +42,33 @@ export function initializeDatabase() {
     );
 
 
+    CREATE TABLE IF NOT EXISTS roster (
+
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+      team_id INTEGER NOT NULL,
+
+      slot TEXT NOT NULL,
+
+      player_name TEXT,
+
+      position TEXT,
+
+      FOREIGN KEY(team_id)
+      REFERENCES teams(id)
+
+    );
+
+
+    CREATE TABLE IF NOT EXISTS settings (
+
+      key TEXT PRIMARY KEY,
+
+      value TEXT NOT NULL
+
+    );
+
+
     CREATE TABLE IF NOT EXISTS draft_players (
 
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -59,86 +88,81 @@ export function initializeDatabase() {
     );
 
 
-    CREATE TABLE IF NOT EXISTS roster (
-
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-      team_id INTEGER NOT NULL,
-
-      slot TEXT NOT NULL,
-
-      draft_player_id INTEGER,
-
-      FOREIGN KEY(team_id)
-        REFERENCES teams(id),
-
-      FOREIGN KEY(draft_player_id)
-        REFERENCES draft_players(id)
-
-    );
-
-
-    CREATE TABLE IF NOT EXISTS settings (
-
-      key TEXT PRIMARY KEY,
-
-      value TEXT NOT NULL
-
-    );
-
   `);
 
 
-  const existingGame = db
-    .prepare("SELECT * FROM game WHERE id = 1")
-    .get();
+
+  const existingGame =
+    db
+      .prepare(
+        "SELECT * FROM game WHERE id = 1"
+      )
+      .get();
+
 
 
   if (!existingGame) {
 
     db.prepare(`
+
       INSERT INTO game
+
       (
         id,
         status,
         countdown
       )
+
       VALUES
+
       (
         1,
         'SETUP',
         0
       )
+
     `).run();
 
   }
 
 
-  const setting = db
-    .prepare(
-      "SELECT value FROM settings WHERE key = ?"
-    )
-    .get("startingBudget");
+
+  const budgetSetting =
+    db
+      .prepare(
+        `
+        SELECT value
+        FROM settings
+        WHERE key = 'startingBudget'
+        `
+      )
+      .get();
 
 
-  if (!setting) {
+
+  if (!budgetSetting) {
 
     db.prepare(`
+
       INSERT INTO settings
       (
         key,
         value
       )
+
       VALUES
       (
         ?,
         ?
       )
-    `).run(
+
+    `)
+    .run(
       "startingBudget",
       "1000"
     );
 
   }
+
 
 }

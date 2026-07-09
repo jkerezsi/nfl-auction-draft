@@ -1,11 +1,33 @@
-import Database from "server/node_modules/@types/better-sqlite3";
+import Database from "better-sqlite3";
 import path from "path";
+import fs from "fs";
 
-const dbPath = path.join(
-  process.cwd(),
-  "../database/fantasy.db"
-);
 
-export const db = new Database(dbPath);
+const databaseFolder =
+  path.join(
+    process.cwd(),
+    "database"
+  );
 
-db.pragma("journal_mode = WAL");
+
+if (!fs.existsSync(databaseFolder)) {
+
+  fs.mkdirSync(
+    databaseFolder,
+    {
+      recursive: true
+    }
+  );
+
+}
+
+
+const databaseFile =
+  path.join(
+    databaseFolder,
+    "fantasy.db"
+  );
+
+
+export const db =
+  new Database(databaseFile);

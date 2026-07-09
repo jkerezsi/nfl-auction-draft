@@ -1,108 +1,23 @@
 import fs from "fs";
 import path from "path";
-
-import { parse } from "csv-parse/sync";
+import csv from "csv-parser";
 
 import { db } from "../database/connection";
 
 
-interface PlayerCSVRow {
-
-  RK: string;
-
-  "PLAYER NAME": string;
-
-  POS: string;
-
-  TEAM: string;
-
-  "BYE WEEK": string;
-
-}
-
-
-
-function normalizePosition(position: string) {
-
-
-  if (position.startsWith("RB")) {
-    return "RB";
-  }
-
-
-  if (position.startsWith("WR")) {
-    return "WR";
-  }
-
-
-  if (position.startsWith("QB")) {
-    return "QB";
-  }
-
-
-  if (position.startsWith("TE")) {
-    return "TE";
-  }
-
-
-  if (position.startsWith("DEF")) {
-    return "DEF";
-  }
-
-
-  if (position.startsWith("K")) {
-    return "K";
-  }
-
-
-  return position;
-
-}
-
-
-
-
-function importPlayers() {
-
-
-  const filePath = path.join(
+const csvFile =
+  path.join(
     process.cwd(),
-    "nfl_top_250.csv"
-  );
-
-
-  console.log(
-    "Reading:",
-    filePath
+    "../server/nfl_top_250.csv"
   );
 
 
 
-  const csvFile = fs.readFileSync(
-    filePath,
-    "utf8"
-  );
+const insertPlayer =
+  db.prepare(`
 
-
-
-  const records = parse<PlayerCSVRow>(
-    csvFile,
-    {
-      columns: true,
-      skip_empty_lines: true
-    }
-  );
-
-
-
-  db.prepare(
-    "DELETE FROM draft_players"
-  ).run();
-
-
-
-  const insert = db.prepare(`
     INSERT INTO draft_players
+
     (
       rank,
       name,
@@ -110,7 +25,9 @@ function importPlayers() {
       nfl_team,
       bye_week
     )
+
     VALUES
+
     (
       ?,
       ?,
@@ -118,83 +35,91 @@ function importPlayers() {
       ?,
       ?
     )
+
   `);
 
 
 
-  for (const row of records) {
+async function importPlayers() {
 
 
-    insert.run(
+  const players: any[] = [];
 
-      Number(row.RK),
 
-      row["PLAYER NAME"],
 
-      normalizePosition(
-        row.POS
-      ),
+  await new Promise<void>((resolve, reject) => {
 
-      row.TEAM,
 
-      Number(row["BYE WEEK"])
+    fs.createReadStream(csvFile)
 
+      .pipe(csv())
+
+      .on(
+        "data",
+        (row) => {
+
+          players.push(row);
+
+        }
+      )
+
+      .on(
+        "end",
+        resolve
+      )
+
+      .on(
+        "error",
+        reject
+      );
+
+
+  });
+
+
+
+  const insertMany =
+    db.transaction(
+      () => {
+
+
+        for (const row of players) {
+
+
+          insertPlayer.run(
+
+            Number(row["RK"]),
+
+            row["PLAYER NAME"],
+
+            row["POS"],
+
+            row["TEAM"],
+
+            Number(row["BYE WEEK"])
+
+          );
+
+
+        }
+
+
+      }
     );
 
 
-  }
+
+  insertMany();
 
 
 
   console.log(
-    `${records.length} players imported`
-  );
-
-}
-
-
-
-
-try {
-
-
-  importPlayers();
-
-
-  console.log(
-    "Import complete"
+    `Imported ${players.length} players`
   );
 
 
-  process.exit(0);
-
-
 }
-catch(error) {
 
 
-  console.error(error);
 
-
-  process.exit(1);
-
-
-}
-try {
-
-  importPlayers();
-
-  console.log(
-    "Import complete"
-  );
-
-  process.exit(0);
-
-}
-catch(error) {
-
-  console.error(error);
-
-  process.exit(1);
-
-}
+importPlayers();
