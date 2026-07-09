@@ -1,14 +1,14 @@
-import { apiGet } from "./api";
+import api from "./api";
 
-import {
-  Team
-} from "../types/team";
+import type { Team } from "../types/team";
 
 
-export function getTeams() {
+export async function getTeams(): Promise<Team[]> {
 
-  return apiGet<Team[]>(
-    "/team"
-  );
+  const response =
+    await api.get<Team[]>("/team");
+
+
+  return response.data;
 
 }

@@ -1,27 +1,11 @@
-const API_URL =
-  "http://localhost:3000/api";
+import axios from "axios";
 
 
-export async function apiGet<T>(
-  endpoint: string
-): Promise<T> {
+const api = axios.create({
+
+  baseURL: "http://localhost:3000/api"
+
+});
 
 
-  const response =
-    await fetch(
-      `${API_URL}${endpoint}`
-    );
-
-
-  if (!response.ok) {
-
-    throw new Error(
-      "API request failed"
-    );
-
-  }
-
-
-  return response.json();
-
-}
+export default api;

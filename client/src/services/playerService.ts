@@ -1,14 +1,14 @@
-import { apiGet } from "./api";
+import api from "./api";
 
-import {
-  Player
-} from "../types/player";
+import type { Player } from "../types/player";
 
 
-export function getPlayers() {
+export async function getPlayers(): Promise<Player[]> {
 
-  return apiGet<Player[]>(
-    "/players"
-  );
+  const response =
+    await api.get<Player[]>("/players");
+
+
+  return response.data;
 
 }

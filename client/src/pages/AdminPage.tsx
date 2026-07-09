@@ -1,36 +1,10 @@
-import {
-  useEffect,
-  useState
-} from "react";
+import { useEffect, useState } from "react";
 
+import type { Player } from "../types/player";
 
 import {
   getPlayers
 } from "../services/playerService";
-
-
-import {
-  getTeams
-} from "../services/teamService";
-
-
-import {
-  Player
-} from "../types/player";
-
-
-import {
-  Team
-} from "../types/team";
-
-
-import PlayerCard
-from "../components/PlayerCard";
-
-
-import TeamCard
-from "../components/TeamCard";
-
 
 
 function AdminPage() {
@@ -40,128 +14,118 @@ function AdminPage() {
     useState<Player[]>([]);
 
 
-  const [teams, setTeams] =
-    useState<Team[]>([]);
-
-
-  const [search, setSearch] =
-    useState("");
-
-
 
   useEffect(() => {
 
-
-    getPlayers()
-      .then(setPlayers)
-      .catch(console.error);
-
-
-    getTeams()
-      .then(setTeams)
-      .catch(console.error);
-
+    loadPlayers();
 
   }, []);
 
 
 
+  async function loadPlayers() {
 
-  const filteredPlayers =
-    players.filter(player =>
+    const data =
+      await getPlayers();
 
-      player.name
-        .toLowerCase()
-        .includes(
-          search.toLowerCase()
-        )
+    setPlayers(data);
 
-    );
+  }
 
 
 
   return (
 
-    <div className="admin-page">
-
+    <div>
 
       <h1>
-        Fantasy Auction Draft
+        Admin Draft Board
       </h1>
 
 
-
-      <section>
-
-        <h2>
-          Teams
-        </h2>
+      <p>
+        Available Players: {players.length}
+      </p>
 
 
-        <div className="team-grid">
+      <table>
 
-          {
-            teams.map(team =>
+        <thead>
 
-              <TeamCard
-                key={team.id}
-                team={team}
-              />
+          <tr>
 
-            )
-          }
+            <th>
+              Rank
+            </th>
 
-        </div>
+            <th>
+              Player
+            </th>
 
-      </section>
+            <th>
+              Team
+            </th>
 
+            <th>
+              Position
+            </th>
 
+            <th>
+              Status
+            </th>
 
-      <section>
+          </tr>
 
-        <h2>
-          Player Pool
-        </h2>
-
-
-        <input
-
-          placeholder="Search players..."
-
-          value={search}
-
-          onChange={
-            e =>
-              setSearch(
-                e.target.value
-              )
-          }
-
-        />
+        </thead>
 
 
-        <div className="player-grid">
+        <tbody>
+
+          {players.map((player) => (
+
+            <tr
+              key={player.id}
+            >
+
+              <td>
+                {player.rank}
+              </td>
 
 
-          {
-            filteredPlayers.map(player =>
-
-              <PlayerCard
-
-                key={player.id}
-
-                player={player}
-
-              />
-
-            )
-          }
+              <td>
+                {player.name}
+              </td>
 
 
-        </div>
+              <td>
+                {player.nfl_team}
+              </td>
 
 
-      </section>
+              <td>
+                {player.position}
+              </td>
+
+
+              <td>
+
+                {player.drafted === 1
+                  ? "Drafted"
+                  : "Available"
+                }
+
+              </td>
+
+
+            </tr>
+
+          ))}
+
+
+        </tbody>
+
+
+      </table>
 
 
     </div>
