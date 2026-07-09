@@ -6,6 +6,7 @@ export function initializeDatabase() {
 
   db.exec(`
 
+
     CREATE TABLE IF NOT EXISTS game (
 
       id INTEGER PRIMARY KEY,
@@ -27,21 +28,21 @@ export function initializeDatabase() {
     );
 
 
-  CREATE TABLE IF NOT EXISTS teams (
+    CREATE TABLE IF NOT EXISTS teams (
 
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-    name TEXT NOT NULL,
+      name TEXT NOT NULL,
 
-    logo TEXT,
+      logo TEXT,
 
-    budget INTEGER NOT NULL,
+      budget INTEGER NOT NULL,
 
-    connected INTEGER DEFAULT 0,
+      connected INTEGER DEFAULT 0,
 
-    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
 
-  );
+    );
 
 
     CREATE TABLE IF NOT EXISTS roster (
@@ -50,14 +51,23 @@ export function initializeDatabase() {
 
       team_id INTEGER NOT NULL,
 
+      player_id INTEGER NOT NULL,
+
+      player_name TEXT NOT NULL,
+
+      position TEXT NOT NULL,
+
+      price INTEGER NOT NULL,
+
       slot TEXT NOT NULL,
 
-      player_name TEXT,
-
-      position TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
 
       FOREIGN KEY(team_id)
-      REFERENCES teams(id)
+      REFERENCES teams(id),
+
+      FOREIGN KEY(player_id)
+      REFERENCES draft_players(id)
 
     );
 
@@ -93,8 +103,6 @@ export function initializeDatabase() {
   `);
 
 
-
-  // Safe migrations for existing database
 
   try {
 
@@ -133,6 +141,7 @@ export function initializeDatabase() {
 
   if (!existingGame) {
 
+
     db.prepare(`
 
       INSERT INTO game
@@ -153,6 +162,7 @@ export function initializeDatabase() {
 
     `).run();
 
+
   }
 
 
@@ -172,15 +182,18 @@ export function initializeDatabase() {
 
   if (!budgetSetting) {
 
+
     db.prepare(`
 
       INSERT INTO settings
+
       (
         key,
         value
       )
 
       VALUES
+
       (
         ?,
         ?
@@ -192,6 +205,8 @@ export function initializeDatabase() {
       "1000"
     );
 
+
   }
+
 
 }

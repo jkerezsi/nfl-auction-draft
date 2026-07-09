@@ -3,3 +3,119 @@
   width: 100%;
 
 }
+
+
+
+.player-page {
+
+  min-height: 100vh;
+
+  display: flex;
+
+  flex-direction: column;
+
+}
+
+
+
+.player-header {
+
+  padding: 20px;
+
+  background: white;
+
+  text-align: center;
+
+}
+
+
+
+.player-content {
+
+  flex: 1;
+
+  padding: 16px;
+
+}
+
+
+
+.player-card {
+
+  background: white;
+
+  border-radius: 12px;
+
+  padding: 20px;
+
+  margin-bottom: 16px;
+
+}
+
+
+
+.team-button {
+
+  width: 100%;
+
+  padding: 18px;
+
+  margin-top: 12px;
+
+  font-size: 18px;
+
+  border-radius: 10px;
+
+  border: none;
+
+}
+
+
+
+.player-nav {
+
+  display: flex;
+
+  position: sticky;
+
+  bottom: 0;
+
+  background: white;
+
+  border-top: 1px solid #ddd;
+
+}
+
+
+
+.player-nav button {
+
+  flex: 1;
+
+  padding: 18px;
+
+  border: none;
+
+  font-size: 16px;
+
+}
+
+
+
+.player-nav .active {
+
+  font-weight: bold;
+
+}
+
+
+
+.change-team {
+
+  margin: 16px;
+
+  padding: 14px;
+
+  border-radius: 10px;
+
+}

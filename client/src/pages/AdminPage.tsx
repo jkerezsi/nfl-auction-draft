@@ -4,291 +4,134 @@ import {
 } from "react";
 
 
-import type { Player } from "../types/player";
-
-
 import {
-  getPlayers
-} from "../services/playerService";
+  getTeams,
+  createTeam
+} from "../services/teamService";
 
 
-import {
-  getGameState,
-  nominatePlayer
-} from "../services/gameService";
+import type { Team } from "../types/team";
 
 
-
-function AdminPage() {
-
-
-  const [players, setPlayers] =
-    useState<Player[]>([]);
+import TeamCard from "../components/TeamCard";
 
 
-
-  const [game, setGame] =
-    useState<any>(null);
+export default function AdminPage() {
 
 
+  const [teams, setTeams] =
+    useState<Team[]>([]);
 
-  useEffect(() => {
 
-    loadData();
-
-  }, []);
+  const [name, setName] =
+    useState("");
 
 
 
-  async function loadData() {
+  async function loadTeams() {
 
+    const data =
+      await getTeams();
 
-    const playerData =
-      await getPlayers();
-
-
-    setPlayers(
-      playerData
-    );
-
-
-    const gameData =
-      await getGameState();
-
-
-    setGame(
-      gameData
-    );
-
+    setTeams(data);
 
   }
 
 
 
-  async function handleNominate(
-    playerId: number
-  ) {
+  async function addTeam() {
+
+    if (!name.trim()) {
+      return;
+    }
 
 
-    await nominatePlayer(
-      playerId
-    );
+    await createTeam(name);
 
 
-    await loadData();
+    setName("");
+
+    await loadTeams();
 
   }
 
 
 
-  const currentPlayer =
-    players.find(
-      (p) =>
-        p.id === game?.currentPlayerId
-    );
+  useEffect(
+    () => {
+
+      loadTeams();
+
+    },
+    []
+  );
 
 
 
   return (
 
-    <div
-      style={{
-        display: "flex",
-        gap: "30px",
-        padding: "20px"
-      }}
-    >
+    <div>
+
+      <h1>
+        Admin Dashboard
+      </h1>
 
 
-      <div
-        style={{
-          flex: 2
-        }}
-      >
-
-        <h1>
-          Player Pool
-        </h1>
+      <h2>
+        Teams
+      </h2>
 
 
-        <table>
+      <div>
 
-          <thead>
+        <input
 
-            <tr>
+          value={name}
 
-              <th>
-                Rank
-              </th>
+          onChange={
+            event =>
+              setName(
+                event.target.value
+              )
+          }
 
-              <th>
-                Player
-              </th>
+          placeholder="Team name"
 
-              <th>
-                Team
-              </th>
-
-              <th>
-                Position
-              </th>
-
-              <th>
-                Action
-              </th>
-
-            </tr>
-
-          </thead>
+        />
 
 
-          <tbody>
-
-
-            {players.map(
-              (player) => (
-
-              <tr
-                key={player.id}
-                style={{
-                  opacity:
-                    player.drafted
-                      ? 0.4
-                      : 1
-                }}
-              >
-
-                <td>
-                  {player.rank}
-                </td>
-
-
-                <td>
-                  {player.name}
-                </td>
-
-
-                <td>
-                  {player.nfl_team}
-                </td>
-
-
-                <td>
-                  {player.position}
-                </td>
-
-
-                <td>
-
-
-                  <button
-
-                    disabled={
-                      player.drafted === 1
-                    }
-
-
-                    onClick={() =>
-                      handleNominate(
-                        player.id
-                      )
-                    }
-
-                  >
-
-                    Nominate
-
-                  </button>
-
-
-                </td>
-
-
-              </tr>
-
-
-            ))}
-
-
-          </tbody>
-
-
-        </table>
+        <button
+          onClick={addTeam}
+        >
+          Add Team
+        </button>
 
 
       </div>
 
 
 
-      <div
-        style={{
-          flex: 1,
-          border: "1px solid #ccc",
-          padding: "20px"
-        }}
-      >
+      <div>
 
+        {
+          teams.map(
+            team => (
 
-        <h1>
-          Current Auction
-        </h1>
+              <TeamCard
 
+                key={
+                  team.id
+                }
 
+                team={
+                  team
+                }
 
-        {!currentPlayer && (
+              />
 
-          <p>
-            No player nominated
-          </p>
-
-        )}
-
-
-
-        {currentPlayer && (
-
-          <>
-
-            <h2>
-              {currentPlayer.name}
-            </h2>
-
-
-            <p>
-              {currentPlayer.nfl_team}
-              {" "}
-              {currentPlayer.position}
-            </p>
-
-
-            <hr />
-
-
-            <p>
-              Status:
-              {" "}
-              {game.status}
-            </p>
-
-
-            <p>
-              Countdown:
-              {" "}
-              {game.countdown}
-            </p>
-
-
-            <p>
-              Current Bid:
-              {" "}
-              ${game.currentBid}
-            </p>
-
-
-          </>
-
-        )}
-
+            )
+          )
+        }
 
       </div>
 
@@ -298,6 +141,3 @@ function AdminPage() {
   );
 
 }
-
-
-export default AdminPage;

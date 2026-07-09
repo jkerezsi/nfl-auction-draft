@@ -6,7 +6,7 @@ import { initializeDatabase } from "./database/init";
 import teamRoutes from "./routes/teamRoutes";
 import playerRoutes from "./routes/playerRoutes";
 import gameRoutes from "./routes/gameRoutes";
-
+import rosterRoutes from "./routes/rosterRoutes";
 
 initializeDatabase();
 
@@ -37,7 +37,10 @@ app.use(
   gameRoutes
 );
 
-
+app.use(
+  "/api/roster",
+  rosterRoutes
+);
 
 app.get(
   "/",

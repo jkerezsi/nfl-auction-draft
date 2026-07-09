@@ -2,21 +2,19 @@ import type { Team } from "../types/team";
 
 
 interface Props {
-
   team: Team;
-
 }
 
 
-
-function TeamCard({
-  team
-}: Props) {
-
+export default function TeamCard(
+  {
+    team
+  }: Props
+) {
 
   return (
 
-    <div className="team-card">
+    <div className="card">
 
       <h3>
         {team.name}
@@ -24,23 +22,16 @@ function TeamCard({
 
 
       <p>
-        Budget:
+        Budget: ${team.budget}
       </p>
 
 
-      <strong>
-        ${team.budget}
-      </strong>
-
-
       <p>
-
         {
           team.connected
             ? "🟢 Connected"
-            : "⚪ Offline"
+            : "🔴 Offline"
         }
-
       </p>
 
 
@@ -49,6 +40,3 @@ function TeamCard({
   );
 
 }
-
-
-export default TeamCard;
