@@ -16,6 +16,10 @@ export function initializeDatabase() {
 
       countdown INTEGER DEFAULT 0,
 
+      current_bid INTEGER DEFAULT 0,
+
+      current_bid_team_id INTEGER,
+
       created_at TEXT DEFAULT CURRENT_TIMESTAMP,
 
       updated_at TEXT DEFAULT CURRENT_TIMESTAMP
@@ -23,23 +27,21 @@ export function initializeDatabase() {
     );
 
 
-    CREATE TABLE IF NOT EXISTS teams (
+  CREATE TABLE IF NOT EXISTS teams (
 
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-      token TEXT UNIQUE NOT NULL,
+    name TEXT NOT NULL,
 
-      name TEXT NOT NULL,
+    logo TEXT,
 
-      logo TEXT,
+    budget INTEGER NOT NULL,
 
-      budget INTEGER NOT NULL,
+    connected INTEGER DEFAULT 0,
 
-      connected INTEGER DEFAULT 0,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
 
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-
-    );
+  );
 
 
     CREATE TABLE IF NOT EXISTS roster (
@@ -89,6 +91,34 @@ export function initializeDatabase() {
 
 
   `);
+
+
+
+  // Safe migrations for existing database
+
+  try {
+
+    db.exec(
+      `
+      ALTER TABLE game
+      ADD COLUMN current_bid INTEGER DEFAULT 0
+      `
+    );
+
+  } catch {}
+
+
+
+  try {
+
+    db.exec(
+      `
+      ALTER TABLE game
+      ADD COLUMN current_bid_team_id INTEGER
+      `
+    );
+
+  } catch {}
 
 
 
@@ -163,6 +193,5 @@ export function initializeDatabase() {
     );
 
   }
-
 
 }

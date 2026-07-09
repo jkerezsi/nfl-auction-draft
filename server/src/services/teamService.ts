@@ -1,38 +1,122 @@
 import { db } from "../database/connection";
 
 
-export class TeamService {
+export interface Team {
+
+  id: number;
+
+  name: string;
+
+  budget: number;
+
+  connected: number;
+
+}
 
 
-  getAllTeams() {
+
+export function getTeams(): Team[] {
 
 
-    return db
-      .prepare(`
+  return db
+    .prepare(
+      `
+      SELECT
 
-        SELECT
+        id,
 
-          id,
+        name,
 
-          name,
+        budget,
 
-          budget,
+        connected
 
-          connected
+      FROM teams
 
-        FROM teams
+      ORDER BY id ASC
 
-        ORDER BY name
-
-      `)
-      .all();
-
-
-  }
+      `
+    )
+    .all() as Team[];
 
 
 }
 
 
-export const teamService =
-  new TeamService();
+
+export function createTeam(
+  name: string
+): Team {
+
+
+  const setting =
+    db
+      .prepare(
+        `
+        SELECT value
+        FROM settings
+        WHERE key = 'startingBudget'
+        `
+      )
+      .get() as {
+        value: string
+      };
+
+
+
+  const budget =
+    Number(setting.value);
+
+
+
+  const result =
+    db
+      .prepare(
+        `
+        INSERT INTO teams
+
+        (
+          name,
+          budget
+        )
+
+        VALUES
+
+        (
+          ?,
+          ?
+        )
+
+        `
+      )
+      .run(
+        name,
+        budget
+      );
+
+
+
+  return db
+    .prepare(
+      `
+      SELECT
+
+        id,
+
+        name,
+
+        budget,
+
+        connected
+
+      FROM teams
+
+      WHERE id = ?
+
+      `
+    )
+    .get(
+      result.lastInsertRowid
+    ) as Team;
+
+}
