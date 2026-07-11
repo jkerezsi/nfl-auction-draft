@@ -5,6 +5,10 @@ import {
   nominatePlayer
 } from "../services/gameService";
 
+import {
+  broadcastGameUpdated
+} from "../socket/socket";
+
 
 const router = Router();
 
@@ -27,19 +31,26 @@ router.post(
   "/nominate/:playerId",
   (req: any, res: any) => {
 
-
     const playerId =
-      Number(req.params.playerId);
-
+      Number(
+        req.params.playerId
+      );
 
 
     const game =
-      nominatePlayer(playerId);
+      nominatePlayer(
+        playerId
+      );
 
 
+    broadcastGameUpdated(
+      game
+    );
 
-    res.json(game);
 
+    res.json(
+      game
+    );
 
   }
 );

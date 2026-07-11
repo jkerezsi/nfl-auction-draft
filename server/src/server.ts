@@ -1,5 +1,8 @@
 import express from "express";
 import cors from "cors";
+import http from "http";
+
+import { Server } from "socket.io";
 
 import { initializeDatabase } from "./database/init";
 
@@ -7,30 +10,65 @@ import teamRoutes from "./routes/teamRoutes";
 import playerRoutes from "./routes/playerRoutes";
 import gameRoutes from "./routes/gameRoutes";
 import rosterRoutes from "./routes/rosterRoutes";
+import bidRoutes from "./routes/bidRoutes";
 
 initializeDatabase();
 
-
 const app = express();
 
+const server = http.createServer(app);
+
+import {
+  initializeSocket
+} from "./socket";
+
+
+const io = new Server(server, {
+  cors: {
+    origin: "*"
+  }
+});
+
+
+initializeSocket(io);
+
+io.on(
+  "connection",
+  socket => {
+
+    console.log(
+      "Socket connected:",
+      socket.id
+    );
+
+    socket.on(
+      "disconnect",
+      () => {
+
+        console.log(
+          "Socket disconnected:",
+          socket.id
+        );
+
+      }
+    );
+
+  }
+);
 
 app.use(cors());
 
 app.use(express.json());
-
-
 
 app.use(
   "/api/team",
   teamRoutes
 );
 
-
 app.use(
   "/api/players",
   playerRoutes
 );
-
 
 app.use(
   "/api/game",
@@ -40,6 +78,11 @@ app.use(
 app.use(
   "/api/roster",
   rosterRoutes
+);
+
+app.use(
+  "/api/bid",
+  bidRoutes
 );
 
 app.get(
@@ -53,12 +96,9 @@ app.get(
   }
 );
 
-
-
 const PORT = 3000;
 
-
-app.listen(
+server.listen(
   PORT,
   () => {
 

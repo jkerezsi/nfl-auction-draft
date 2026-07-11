@@ -99,6 +99,28 @@ export function initializeDatabase() {
 
     );
 
+    CREATE TABLE IF NOT EXISTS auction_bids (
+
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+  team_id INTEGER NOT NULL,
+
+  player_id INTEGER NOT NULL,
+
+  amount INTEGER NOT NULL,
+
+  submitted_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
+  FOREIGN KEY(team_id)
+    REFERENCES teams(id),
+
+  FOREIGN KEY(player_id)
+    REFERENCES draft_players(id),
+
+  UNIQUE(team_id, player_id)
+
+);
+
 
   `);
 
@@ -115,7 +137,42 @@ export function initializeDatabase() {
 
   } catch {}
 
+try {
 
+  db.exec(
+    `
+    ALTER TABLE game
+    ADD COLUMN last_winner_team_id INTEGER
+    `
+  );
+
+} catch {}
+
+
+
+try {
+
+  db.exec(
+    `
+    ALTER TABLE game
+    ADD COLUMN last_winner_price INTEGER
+    `
+  );
+
+} catch {}
+
+
+
+try {
+
+  db.exec(
+    `
+    ALTER TABLE game
+    ADD COLUMN last_winner_player_id INTEGER
+    `
+  );
+
+} catch {}
 
   try {
 

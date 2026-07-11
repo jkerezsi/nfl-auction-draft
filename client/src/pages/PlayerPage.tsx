@@ -10,6 +10,16 @@ import {
 
 
 import {
+  getGameState
+} from "../services/gameService";
+
+
+import {
+  submitBid
+} from "../services/bidService";
+
+
+import {
   saveTeamId,
   getTeamId,
   clearTeamId
@@ -33,14 +43,36 @@ function PlayerPage() {
     useState<Team[]>([]);
 
 
+
   const [selectedTeamId, setSelectedTeamId] =
     useState<number | null>(
       getTeamId()
     );
 
 
+
+  const [game, setGame] =
+    useState<any>(
+      null
+    );
+
+
+
+  const [bidAmount, setBidAmount] =
+    useState("");
+
+
+
+  const [bidSubmitted, setBidSubmitted] =
+    useState(false);
+
+
+
   const [activeTab, setActiveTab] =
-    useState<Tab>("auction");
+    useState<Tab>(
+      "auction"
+    );
+
 
 
 
@@ -49,20 +81,64 @@ function PlayerPage() {
 
       loadTeams();
 
+      loadGame();
+
+
+      const interval =
+        setInterval(
+          loadGame,
+          3000
+        );
+
+
+      return () =>
+        clearInterval(
+          interval
+        );
+
+
     },
     []
   );
 
 
 
+
+
   async function loadTeams() {
+
 
     const data =
       await getTeams();
 
-    setTeams(data);
+
+    setTeams(
+      data
+    );
+
 
   }
+
+
+
+
+
+  async function loadGame() {
+
+
+    const data =
+      await getGameState();
+
+
+    setGame(
+      data
+    );
+
+
+  }
+
+
+
 
 
 
@@ -70,29 +146,94 @@ function PlayerPage() {
     teamId: number
   ) {
 
-    saveTeamId(teamId);
 
-    setSelectedTeamId(teamId);
+    saveTeamId(
+      teamId
+    );
+
+
+    setSelectedTeamId(
+      teamId
+    );
+
 
   }
+
+
+
 
 
 
   function changeTeam() {
 
+
     clearTeamId();
 
-    setSelectedTeamId(null);
+
+    setSelectedTeamId(
+      null
+    );
+
 
   }
 
 
 
+
+
+
+
+  async function placeBid() {
+
+
+    if (
+      !selectedTeamId ||
+      !game?.currentPlayer
+    ) {
+
+      return;
+
+    }
+
+
+
+    await submitBid(
+
+      selectedTeamId,
+
+      game.currentPlayer.id,
+
+      Number(
+        bidAmount
+      )
+
+    );
+
+
+
+    setBidSubmitted(
+      true
+    );
+
+
+  }
+
+
+
+
+
+
   const selectedTeam =
     teams.find(
+
       team =>
         team.id === selectedTeamId
+
     );
+
+
+
+
 
 
 
@@ -116,11 +257,11 @@ function PlayerPage() {
 
                 <button
 
-                  className="team-button"
-
                   key={
                     team.id
                   }
+
+                  className="team-button"
 
                   onClick={
                     () =>
@@ -136,6 +277,7 @@ function PlayerPage() {
                 </button>
 
               )
+
             )
           }
 
@@ -146,7 +288,12 @@ function PlayerPage() {
 
     );
 
+
   }
+
+
+
+
 
 
 
@@ -156,6 +303,7 @@ function PlayerPage() {
 
 
       <div className="player-header">
+
 
         <h1>
           {selectedTeam.name}
@@ -171,79 +319,179 @@ function PlayerPage() {
 
 
 
-      <div className="player-content">
 
 
-        {
-          activeTab === "auction" && (
-
-            <div className="player-card">
-
-              <h2>
-                Auction
-              </h2>
+      {
+        activeTab === "auction" && (
 
 
-              <p>
-                Waiting for next player...
-              </p>
+          <div className="player-card">
 
 
-            </div>
-
-          )
-        }
+            {
+              game?.currentPlayer ? (
 
 
-
-        {
-          activeTab === "team" && (
-
-            <div className="player-card">
-
-              <h2>
-                My Team
-              </h2>
+                <>
 
 
-              <p>
-                No players drafted yet.
-              </p>
+                  <h2>
+                    {game.currentPlayer.name}
+                  </h2>
 
 
-              <h3>
-                Missing spots
-              </h3>
+                  <p>
+
+                    {game.currentPlayer.position}
+
+                    {" - "}
+
+                    {game.currentPlayer.nfl_team}
+
+                  </p>
 
 
-              <ul>
 
-                <li>
-                  QB
-                </li>
-
-                <li>
-                  RB
-                </li>
-
-                <li>
-                  WR
-                </li>
-
-                <li>
-                  TE
-                </li>
-
-              </ul>
+                  {
+                    bidSubmitted ? (
 
 
-            </div>
+                      <div>
 
-          )
-        }
+                        ✅ Bid locked
+
+                        <p>
+                          Waiting for result...
+                        </p>
+
+                      </div>
 
 
-      </div>
+                    ) : (
+
+
+                      <>
+
+                        <input
+
+                          type="number"
+
+                          placeholder="Your bid"
+
+                          value={
+                            bidAmount
+                          }
+
+                          onChange={
+                            e =>
+                              setBidAmount(
+                                e.target.value
+                              )
+                          }
+
+                        />
+
+
+
+                        <button
+
+                          onClick={
+                            placeBid
+                          }
+
+                        >
+
+                          Submit Bid
+
+                        </button>
+
+
+                      </>
+
+                    )
+
+                  }
+
+
+                </>
+
+
+              ) : (
+
+
+                <h2>
+                  Waiting for next player...
+                </h2>
+
+
+              )
+
+            }
+
+
+          </div>
+
+
+        )
+
+      }
+
+
+
+
+
+
+
+      {
+        activeTab === "team" && (
+
+          <div className="player-card">
+
+            <h2>
+              My Team
+            </h2>
+
+
+            <p>
+              No players drafted yet.
+            </p>
+
+
+            <h3>
+              Missing spots
+            </h3>
+
+
+            <ul>
+
+              <li>
+                QB
+              </li>
+
+              <li>
+                RB
+              </li>
+
+              <li>
+                WR
+              </li>
+
+              <li>
+                TE
+              </li>
+
+
+            </ul>
+
+
+          </div>
+
+        )
+
+      }
+
+
+
 
 
 
@@ -252,12 +500,6 @@ function PlayerPage() {
 
 
         <button
-
-          className={
-            activeTab === "auction"
-              ? "active"
-              : ""
-          }
 
           onClick={
             () =>
@@ -275,12 +517,6 @@ function PlayerPage() {
 
 
         <button
-
-          className={
-            activeTab === "team"
-              ? "active"
-              : ""
-          }
 
           onClick={
             () =>
@@ -300,11 +536,15 @@ function PlayerPage() {
 
 
 
+
+
       <button
 
         className="change-team"
 
-        onClick={changeTeam}
+        onClick={
+          changeTeam
+        }
 
       >
 
@@ -318,7 +558,9 @@ function PlayerPage() {
 
   );
 
+
 }
+
 
 
 export default PlayerPage;
