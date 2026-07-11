@@ -1,0 +1,1795 @@
+import {
+  BrowserRouter,
+  Routes,
+  Route
+} from "react-router-dom";
+
+import AdminPage from "./pages/AdminPage";
+import PlayerPage from "./pages/PlayerPage";
+
+
+function App() {
+
+  return (
+
+    <BrowserRouter>
+
+      <Routes>
+
+        <Route
+          path="/admin"
+          element={<AdminPage />}
+        />
+
+        <Route
+          path="/"
+          element={<PlayerPage />}
+        />
+
+      </Routes>
+
+    </BrowserRouter>
+
+  );
+
+}
+
+
+export default App;import React from "react";
+import ReactDOM from "react-dom/client";
+
+import App from "./App";
+
+import "./index.css";
+
+
+ReactDOM
+  .createRoot(
+    document.getElementById("root")!
+  )
+  .render(
+
+    <React.StrictMode>
+
+      <App />
+
+    </React.StrictMode>
+
+  );export interface Player {
+  id: number;
+  rank: number;
+  name: string;
+  position: string;
+  nfl_team: string;
+  bye_week: number;
+  drafted: number;
+}export interface Team {
+  id: number;
+  name: string;
+  budget: number;
+  connected: number;
+}#root {
+
+  width: 100%;
+
+}
+
+
+
+.player-page {
+
+  min-height: 100vh;
+
+  display: flex;
+
+  flex-direction: column;
+
+}
+
+
+
+.player-header {
+
+  padding: 20px;
+
+  background: white;
+
+  text-align: center;
+
+}
+
+
+
+.player-content {
+
+  flex: 1;
+
+  padding: 16px;
+
+}
+
+
+
+.player-card {
+
+  background: white;
+
+  border-radius: 12px;
+
+  padding: 20px;
+
+  margin-bottom: 16px;
+
+}
+
+
+
+.team-button {
+
+  width: 100%;
+
+  padding: 18px;
+
+  margin-top: 12px;
+
+  font-size: 18px;
+
+  border-radius: 10px;
+
+  border: none;
+
+}
+
+
+
+.player-nav {
+
+  display: flex;
+
+  position: sticky;
+
+  bottom: 0;
+
+  background: white;
+
+  border-top: 1px solid #ddd;
+
+}
+
+
+
+.player-nav button {
+
+  flex: 1;
+
+  padding: 18px;
+
+  border: none;
+
+  font-size: 16px;
+
+}
+
+
+
+.player-nav .active {
+
+  font-weight: bold;
+
+}
+
+
+
+.change-team {
+
+  margin: 16px;
+
+  padding: 14px;
+
+  border-radius: 10px;
+
+}body {
+
+  margin: 0;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  background: #f5f5f5;
+
+}
+
+
+* {
+
+  box-sizing: border-box;
+
+}
+
+
+button {
+
+  cursor: pointer;
+
+}interface Props {
+
+  children: React.ReactNode;
+
+}
+
+
+function Card({
+  children
+}: Props) {
+
+
+  return (
+
+    <div className="card">
+
+      {children}
+
+    </div>
+
+  );
+
+}
+
+
+export default Card;interface Props {
+
+  text: string;
+
+}
+
+
+function Badge({
+  text
+}: Props) {
+
+
+  return (
+
+    <span className={`badge ${text}`}>
+
+      {text}
+
+    </span>
+
+  );
+
+}
+
+
+export default Badge;interface Props {
+
+  children: React.ReactNode;
+
+  onClick?: () => void;
+
+}
+
+
+function Button({
+  children,
+  onClick
+}: Props) {
+
+
+  return (
+
+    <button
+      onClick={onClick}
+      className="app-button"
+    >
+
+      {children}
+
+    </button>
+
+  );
+
+}
+
+
+export default Button;import type { Player } from "../types/player";
+interface Props {
+
+  player: Player;
+
+}
+
+
+
+function PlayerCard({
+  player
+}: Props) {
+
+
+  return (
+
+    <div className="player-card">
+
+      <div className="player-rank">
+        #{player.rank}
+      </div>
+
+
+      <div className="player-name">
+        {player.name}
+      </div>
+
+
+      <div className="player-info">
+
+        <span className={`position ${player.position}`}>
+          {player.position}
+        </span>
+
+
+        <span>
+          {player.nfl_team}
+        </span>
+
+
+        <span>
+          Bye {player.bye_week}
+        </span>
+
+      </div>
+
+
+    </div>
+
+  );
+
+}
+
+
+export default PlayerCard;import type { Team } from "../types/team";
+
+
+interface Props {
+  team: Team;
+}
+
+
+export default function TeamCard(
+  {
+    team
+  }: Props
+) {
+
+  return (
+
+    <div className="card">
+
+      <h3>
+        {team.name}
+      </h3>
+
+
+      <p>
+        Budget: ${team.budget}
+      </p>
+
+
+      <p>
+        {
+          team.connected
+            ? "🟢 Connected"
+            : "🔴 Offline"
+        }
+      </p>
+
+
+    </div>
+
+  );
+
+}import {
+  useEffect,
+  useState
+} from "react";
+
+
+import {
+  getTeams,
+  createTeam
+} from "../services/teamService";
+
+
+import {
+  getPlayers
+} from "../services/playerService";
+
+
+import {
+  nominatePlayer
+} from "../services/gameService";
+
+
+import type { Team } from "../types/team";
+
+
+import type { Player } from "../types/player";
+
+
+import TeamCard from "../components/TeamCard";
+
+import socket from "../services/socket";
+
+export default function AdminPage() {
+
+
+  const [teams, setTeams] =
+    useState<Team[]>([]);
+
+
+
+  const [players, setPlayers] =
+    useState<Player[]>([]);
+
+
+
+  const [name, setName] =
+    useState("");
+
+
+
+  const [currentPlayer, setCurrentPlayer] =
+    useState<Player | null>(
+      null
+    );
+
+
+
+
+
+  async function loadTeams() {
+
+
+    const data =
+      await getTeams();
+
+
+    setTeams(
+      data
+    );
+
+
+  }
+
+
+
+
+
+
+  async function loadPlayers() {
+
+
+    const data =
+      await getPlayers();
+
+
+    setPlayers(
+      data
+    );
+
+
+  }
+
+
+
+
+
+
+  async function addTeam() {
+
+
+    if (!name.trim()) {
+
+      return;
+
+    }
+
+
+    await createTeam(
+      name
+    );
+
+
+    setName("");
+
+
+    await loadTeams();
+
+
+  }
+
+
+
+
+
+
+async function startAuction(
+
+  playerId: number
+
+) {
+
+
+  const result =
+    await nominatePlayer(
+      playerId
+    );
+
+
+  const player =
+    players.find(
+
+      item =>
+        item.id === playerId
+
+    );
+
+
+  setCurrentPlayer(
+    player || null
+  );
+
+
+
+  socket.emit(
+    "auctionStarted",
+    result
+  );
+
+
+}
+
+
+
+
+
+
+
+  useEffect(
+    () => {
+
+
+      loadTeams();
+
+      loadPlayers();
+
+
+    },
+    []
+  );
+
+
+
+
+
+
+
+  return (
+
+    <div>
+
+
+      <h1>
+        Admin Dashboard
+      </h1>
+
+
+
+
+
+      <h2>
+        Teams
+      </h2>
+
+
+
+      <div>
+
+
+        <input
+
+
+          value={
+            name
+          }
+
+
+          onChange={
+
+            event =>
+              setName(
+                event.target.value
+              )
+
+          }
+
+
+          placeholder="Team name"
+
+
+        />
+
+
+
+        <button
+
+          onClick={
+            addTeam
+          }
+
+        >
+
+          Add Team
+
+        </button>
+
+
+
+      </div>
+
+
+
+
+
+
+      <div>
+
+
+        {
+          teams.map(
+
+            team => (
+
+              <TeamCard
+
+                key={
+                  team.id
+                }
+
+                team={
+                  team
+                }
+
+              />
+
+            )
+
+          )
+        }
+
+
+      </div>
+
+
+
+
+
+
+      <hr />
+
+
+
+
+
+
+      <h2>
+        Auction Control
+      </h2>
+
+
+
+
+
+      {
+
+        currentPlayer && (
+
+          <div>
+
+
+            <h3>
+              Current Player
+            </h3>
+
+
+            <p>
+
+              {currentPlayer.name}
+
+              {" - "}
+
+              {currentPlayer.position}
+
+              {" - "}
+
+              {currentPlayer.nfl_team}
+
+            </p>
+
+
+          </div>
+
+        )
+
+      }
+
+
+
+
+
+
+
+      <h3>
+        Players
+      </h3>
+
+
+
+
+      <div>
+
+
+        {
+          players.map(
+
+            player => (
+
+
+              <div
+
+                key={
+                  player.id
+                }
+
+              >
+
+
+                <span>
+
+                  {player.rank}.
+
+                  {" "}
+
+                  {player.name}
+
+                  {" ("}
+
+                  {player.position}
+
+                  {")"}
+
+                </span>
+
+
+
+                <button
+
+                  onClick={
+                    () =>
+                      startAuction(
+                        player.id
+                      )
+                  }
+
+                >
+
+                  Nominate
+
+                </button>
+
+
+
+              </div>
+
+
+            )
+
+          )
+        }
+
+
+      </div>
+
+
+
+    </div>
+
+  );
+
+
+}import {
+  useEffect,
+  useState
+} from "react";
+
+
+import {
+  getTeams
+} from "../services/teamService";
+
+
+import {
+  getGameState
+} from "../services/gameService";
+
+
+import {
+  submitBid
+} from "../services/bidService";
+
+
+import socket from "../services/socket";
+
+
+import {
+  saveTeamId,
+  getTeamId,
+  clearTeamId
+} from "../services/sessionService";
+
+
+import type { Team } from "../types/team";
+
+
+
+type Tab =
+  | "auction"
+  | "team";
+
+
+
+function PlayerPage() {
+
+
+  const [teams, setTeams] =
+    useState<Team[]>([]);
+
+
+
+  const [selectedTeamId, setSelectedTeamId] =
+    useState<number | null>(
+      getTeamId()
+    );
+
+
+
+  const [game, setGame] =
+    useState<any>(
+      null
+    );
+
+
+
+  const [bidAmount, setBidAmount] =
+    useState("");
+
+
+
+  const [bidSubmitted, setBidSubmitted] =
+    useState(false);
+
+
+
+  const [activeTab, setActiveTab] =
+    useState<Tab>(
+      "auction"
+    );
+
+
+
+
+
+  useEffect(
+    () => {
+
+
+      loadTeams();
+
+      loadGame();
+
+
+
+      socket.on(
+
+        "GAME_UPDATED",
+
+        (updatedGame) => {
+
+
+          setGame(
+            updatedGame
+          );
+
+
+        }
+
+      );
+
+
+
+      return () => {
+
+
+        socket.off(
+          "GAME_UPDATED"
+        );
+
+
+      };
+
+
+
+    },
+    []
+  );
+
+
+
+
+
+  async function loadTeams() {
+
+
+    const data =
+      await getTeams();
+
+
+    setTeams(
+      data
+    );
+
+
+  }
+
+
+
+
+
+  async function loadGame() {
+
+
+    const data =
+      await getGameState();
+
+
+    setGame(
+      data
+    );
+
+
+  }
+
+
+
+
+
+  function selectTeam(
+    teamId: number
+  ) {
+
+
+    saveTeamId(
+      teamId
+    );
+
+
+    setSelectedTeamId(
+      teamId
+    );
+
+
+  }
+
+
+
+
+
+  function changeTeam() {
+
+
+    clearTeamId();
+
+
+    setSelectedTeamId(
+      null
+    );
+
+
+    setBidSubmitted(
+      false
+    );
+
+
+  }
+
+
+
+
+
+  async function placeBid() {
+
+
+    try {
+
+
+      if (
+
+        !selectedTeamId ||
+
+        !game?.currentPlayer
+
+      ) {
+
+        return;
+
+      }
+
+
+
+      await submitBid(
+
+        selectedTeamId,
+
+        game.currentPlayer.id,
+
+        Number(
+          bidAmount
+        )
+
+      );
+
+
+
+      setBidSubmitted(
+        true
+      );
+
+
+
+    } catch (error: any) {
+
+
+      alert(
+
+        error.response?.data?.error ||
+
+        "Bid failed"
+
+      );
+
+
+    }
+
+
+  }
+
+
+
+
+
+  const selectedTeam =
+    teams.find(
+
+      team =>
+
+        team.id === selectedTeamId
+
+    );
+
+
+
+
+
+
+  const auctionFinished =
+    game?.status === "RESULT";
+
+
+
+  const wonAuction =
+    auctionFinished &&
+
+    game?.last_winner_team_id === selectedTeamId;
+
+
+
+
+
+
+  if (!selectedTeam) {
+
+
+    return (
+
+      <div className="player-page">
+
+
+        <div className="player-card">
+
+
+          <h1>
+            Choose your team
+          </h1>
+
+
+          {
+            teams.map(
+
+              team => (
+
+
+                <button
+
+                  key={
+                    team.id
+                  }
+
+                  className="team-button"
+
+                  onClick={
+                    () =>
+                      selectTeam(
+                        team.id
+                      )
+                  }
+
+                >
+
+                  {team.name}
+
+                </button>
+
+
+              )
+
+            )
+          }
+
+
+        </div>
+
+
+      </div>
+
+    );
+
+
+  }
+
+
+
+
+
+
+  return (
+
+    <div className="player-page">
+
+
+      <div className="player-header">
+
+
+        <h1>
+          {selectedTeam.name}
+        </h1>
+
+
+        <div>
+          Budget: ${selectedTeam.budget}
+        </div>
+
+
+      </div>
+
+
+
+
+
+
+      {
+        activeTab === "auction" && (
+
+
+          <div className="player-card">
+
+
+            {
+
+              auctionFinished ? (
+
+
+                wonAuction ? (
+
+
+                  <div>
+
+                    <h2>
+                      🏆 YOU WON
+                    </h2>
+
+
+                    <p>
+                      Player:
+                    </p>
+
+
+                    <strong>
+                      {game.currentPlayer?.name}
+                    </strong>
+
+
+                    <p>
+                      Price:
+                      ${game.last_winner_price}
+                    </p>
+
+
+                  </div>
+
+
+                ) : (
+
+
+                  <div>
+
+                    <h2>
+                      ❌ YOU LOST
+                    </h2>
+
+
+                    <p>
+                      Winning bid:
+                      ${game.last_winner_price}
+                    </p>
+
+
+                  </div>
+
+
+                )
+
+
+              ) : game?.currentPlayer ? (
+
+
+                <>
+
+
+                  <h2>
+                    {game.currentPlayer.name}
+                  </h2>
+
+
+                  <p>
+
+                    {game.currentPlayer.position}
+
+                    {" - "}
+
+                    {game.currentPlayer.nfl_team}
+
+                  </p>
+
+
+
+                  {
+
+                    bidSubmitted ? (
+
+
+                      <div>
+
+                        ✅ Bid locked
+
+
+                        <p>
+                          Waiting for result...
+                        </p>
+
+
+                      </div>
+
+
+                    ) : (
+
+
+                      <>
+
+
+                        <input
+
+                          type="number"
+
+                          placeholder="Your bid"
+
+                          value={
+                            bidAmount
+                          }
+
+                          onChange={
+                            e =>
+                              setBidAmount(
+                                e.target.value
+                              )
+                          }
+
+                        />
+
+
+
+                        <button
+
+                          onClick={
+                            placeBid
+                          }
+
+                        >
+
+                          Submit Bid
+
+                        </button>
+
+
+                      </>
+
+
+                    )
+
+
+                  }
+
+
+                </>
+
+
+              ) : (
+
+
+                <h2>
+                  Waiting for next player...
+                </h2>
+
+
+              )
+
+
+            }
+
+
+          </div>
+
+
+        )
+
+      }
+
+
+
+
+
+
+      {
+        activeTab === "team" && (
+
+
+          <div className="player-card">
+
+
+            <h2>
+              My Team
+            </h2>
+
+
+            <p>
+              No players drafted yet.
+            </p>
+
+
+          </div>
+
+
+        )
+
+      }
+
+
+
+
+
+
+      <div className="player-nav">
+
+
+        <button
+
+          onClick={
+            () =>
+              setActiveTab(
+                "auction"
+              )
+          }
+
+        >
+
+          Auction
+
+        </button>
+
+
+
+        <button
+
+          onClick={
+            () =>
+              setActiveTab(
+                "team"
+              )
+          }
+
+        >
+
+          My Team
+
+        </button>
+
+
+      </div>
+
+
+
+
+
+
+      <button
+
+        className="change-team"
+
+        onClick={
+          changeTeam
+        }
+
+      >
+
+        Change Team
+
+      </button>
+
+
+
+    </div>
+
+  );
+
+
+}
+
+
+
+export default PlayerPage;import {
+  useEffect,
+  useState
+} from "react";
+
+
+import {
+  getTeams
+} from "../services/teamService";
+
+
+import {
+  saveTeamId,
+  getTeamId
+} from "../services/sessionService";
+
+
+import type { Team } from "../types/team";
+
+
+
+export default function HomePage() {
+
+
+  const [teams, setTeams] =
+    useState<Team[]>([]);
+
+
+  const [selectedTeam, setSelectedTeam] =
+    useState<number | null>(
+      getTeamId()
+    );
+
+
+
+  useEffect(
+    () => {
+
+      loadTeams();
+
+    },
+    []
+  );
+
+
+
+  async function loadTeams() {
+
+    const data =
+      await getTeams();
+
+    setTeams(data);
+
+  }
+
+
+
+  function selectTeam(
+    id: number
+  ) {
+
+    saveTeamId(id);
+
+    setSelectedTeam(id);
+
+  }
+
+
+
+  if (selectedTeam) {
+
+
+    const team =
+      teams.find(
+        t =>
+          t.id === selectedTeam
+      );
+
+
+
+    return (
+
+      <div>
+
+        <h1>
+          Welcome {team?.name}
+        </h1>
+
+
+        <h2>
+          Budget: ${team?.budget}
+        </h2>
+
+
+        <p>
+          Waiting for draft...
+        </p>
+
+
+      </div>
+
+    );
+
+  }
+
+
+
+  return (
+
+    <div>
+
+      <h1>
+        Choose your team
+      </h1>
+
+
+      {
+        teams.map(
+          team => (
+
+            <button
+
+              key={
+                team.id
+              }
+
+              onClick={
+                () =>
+                  selectTeam(
+                    team.id
+                  )
+              }
+
+            >
+
+              {team.name}
+
+            </button>
+
+          )
+        )
+      }
+
+
+    </div>
+
+  );
+
+}import { io } from "socket.io-client";
+
+
+const socket =
+  io(
+    "http://localhost:3000"
+  );
+
+
+export default socket;const TEAM_KEY = "fantasy_team_id";
+
+
+export function saveTeamId(
+  teamId: number
+) {
+
+  localStorage.setItem(
+    TEAM_KEY,
+    String(teamId)
+  );
+
+}
+
+
+
+export function getTeamId(): number | null {
+
+  const value =
+    localStorage.getItem(
+      TEAM_KEY
+    );
+
+
+  if (!value) {
+
+    return null;
+
+  }
+
+
+  return Number(value);
+
+}
+
+
+
+export function clearTeamId() {
+
+  localStorage.removeItem(
+    TEAM_KEY
+  );
+
+}import api from "./api";
+
+import type { Player } from "../types/player";
+
+
+export async function getPlayers(): Promise<Player[]> {
+
+  const response =
+    await api.get<Player[]>("/players");
+
+
+  return response.data;
+
+}import axios from "axios";
+
+
+const api = axios.create({
+
+  baseURL: "http://localhost:3000/api"
+
+});
+
+
+export default api;import api from "./api";
+
+import type { Team } from "../types/team";
+
+
+export async function getTeams(): Promise<Team[]> {
+
+  const response =
+    await api.get("/team");
+
+  return response.data;
+
+}
+
+
+export async function createTeam(
+  name: string
+): Promise<Team> {
+
+  const response =
+    await api.post(
+      "/team",
+      {
+        name
+      }
+    );
+
+  return response.data;
+
+}import api from "./api";
+
+
+export async function submitBid(
+
+  teamId: number,
+
+  playerId: number,
+
+  amount: number
+
+) {
+
+  const response =
+    await api.post(
+      "/bid",
+      {
+        teamId,
+        playerId,
+        amount
+      }
+    );
+
+
+  return response.data;
+
+}import api from "./api";
+
+
+
+export async function getGameState() {
+
+
+  const response =
+    await api.get(
+      "/game"
+    );
+
+
+  return response.data;
+
+
+}
+
+
+
+
+
+export async function nominatePlayer(
+
+  playerId: number
+
+) {
+
+
+  const response =
+    await api.post(
+      `/game/nominate/${playerId}`
+    );
+
+
+  return response.data;
+
+
+}

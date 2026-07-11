@@ -1,0 +1,1934 @@
+import { db } from "./connection";
+
+
+export function initializeDatabase() {
+
+
+  db.exec(`
+
+
+    CREATE TABLE IF NOT EXISTS game (
+
+      id INTEGER PRIMARY KEY,
+
+      status TEXT NOT NULL,
+
+      current_player_id INTEGER,
+
+      countdown INTEGER DEFAULT 0,
+
+      current_bid INTEGER DEFAULT 0,
+
+      current_bid_team_id INTEGER,
+
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+
+    );
+
+
+    CREATE TABLE IF NOT EXISTS teams (
+
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+      name TEXT NOT NULL,
+
+      logo TEXT,
+
+      budget INTEGER NOT NULL,
+
+      connected INTEGER DEFAULT 0,
+
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+
+    );
+
+
+    CREATE TABLE IF NOT EXISTS roster (
+
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+      team_id INTEGER NOT NULL,
+
+      player_id INTEGER NOT NULL,
+
+      player_name TEXT NOT NULL,
+
+      position TEXT NOT NULL,
+
+      price INTEGER NOT NULL,
+
+      slot TEXT NOT NULL,
+
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
+      FOREIGN KEY(team_id)
+      REFERENCES teams(id),
+
+      FOREIGN KEY(player_id)
+      REFERENCES draft_players(id)
+
+    );
+
+
+    CREATE TABLE IF NOT EXISTS settings (
+
+      key TEXT PRIMARY KEY,
+
+      value TEXT NOT NULL
+
+    );
+
+
+    CREATE TABLE IF NOT EXISTS draft_players (
+
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+      rank INTEGER,
+
+      name TEXT NOT NULL,
+
+      position TEXT NOT NULL,
+
+      nfl_team TEXT,
+
+      bye_week INTEGER,
+
+      drafted INTEGER DEFAULT 0
+
+    );
+
+    CREATE TABLE IF NOT EXISTS auction_bids (
+
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+  team_id INTEGER NOT NULL,
+
+  player_id INTEGER NOT NULL,
+
+  amount INTEGER NOT NULL,
+
+  submitted_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
+  FOREIGN KEY(team_id)
+    REFERENCES teams(id),
+
+  FOREIGN KEY(player_id)
+    REFERENCES draft_players(id),
+
+  UNIQUE(team_id, player_id)
+
+);
+
+
+  `);
+
+
+
+  try {
+
+    db.exec(
+      `
+      ALTER TABLE game
+      ADD COLUMN current_bid INTEGER DEFAULT 0
+      `
+    );
+
+  } catch {}
+
+try {
+
+  db.exec(
+    `
+    ALTER TABLE game
+    ADD COLUMN last_winner_team_id INTEGER
+    `
+  );
+
+} catch {}
+
+
+
+try {
+
+  db.exec(
+    `
+    ALTER TABLE game
+    ADD COLUMN last_winner_price INTEGER
+    `
+  );
+
+} catch {}
+
+
+
+try {
+
+  db.exec(
+    `
+    ALTER TABLE game
+    ADD COLUMN last_winner_player_id INTEGER
+    `
+  );
+
+} catch {}
+
+  try {
+
+    db.exec(
+      `
+      ALTER TABLE game
+      ADD COLUMN current_bid_team_id INTEGER
+      `
+    );
+
+  } catch {}
+
+
+
+  const existingGame =
+    db
+      .prepare(
+        "SELECT * FROM game WHERE id = 1"
+      )
+      .get();
+
+
+
+  if (!existingGame) {
+
+
+    db.prepare(`
+
+      INSERT INTO game
+
+      (
+        id,
+        status,
+        countdown
+      )
+
+      VALUES
+
+      (
+        1,
+        'SETUP',
+        0
+      )
+
+    `).run();
+
+
+  }
+
+
+
+  const budgetSetting =
+    db
+      .prepare(
+        `
+        SELECT value
+        FROM settings
+        WHERE key = 'startingBudget'
+        `
+      )
+      .get();
+
+
+
+  if (!budgetSetting) {
+
+
+    db.prepare(`
+
+      INSERT INTO settings
+
+      (
+        key,
+        value
+      )
+
+      VALUES
+
+      (
+        ?,
+        ?
+      )
+
+    `)
+    .run(
+      "startingBudget",
+      "1000"
+    );
+
+
+  }
+
+
+}import Database from "better-sqlite3";
+import path from "path";
+import fs from "fs";
+
+
+const databaseFolder =
+  path.join(
+    process.cwd(),
+    "database"
+  );
+
+
+if (!fs.existsSync(databaseFolder)) {
+
+  fs.mkdirSync(
+    databaseFolder,
+    {
+      recursive: true
+    }
+  );
+
+}
+
+
+const databaseFile =
+  path.join(
+    databaseFolder,
+    "fantasy.db"
+  );
+
+
+export const db =
+  new Database(databaseFile);import fs from "fs";
+import path from "path";
+import csv from "csv-parser";
+
+import { db } from "../database/connection";
+
+
+const csvFile =
+  path.join(
+    process.cwd(),
+    "../server/nfl_top_250.csv"
+  );
+
+
+
+const insertPlayer =
+  db.prepare(`
+
+    INSERT INTO draft_players
+
+    (
+      rank,
+      name,
+      position,
+      nfl_team,
+      bye_week
+    )
+
+    VALUES
+
+    (
+      ?,
+      ?,
+      ?,
+      ?,
+      ?
+    )
+
+  `);
+
+
+
+async function importPlayers() {
+
+
+  const players: any[] = [];
+
+
+
+  await new Promise<void>((resolve, reject) => {
+
+
+    fs.createReadStream(csvFile)
+
+      .pipe(csv())
+
+      .on(
+        "data",
+        (row) => {
+
+          players.push(row);
+
+        }
+      )
+
+      .on(
+        "end",
+        resolve
+      )
+
+      .on(
+        "error",
+        reject
+      );
+
+
+  });
+
+
+
+  const insertMany =
+    db.transaction(
+      () => {
+
+
+        for (const row of players) {
+
+
+          insertPlayer.run(
+
+            Number(row["RK"]),
+
+            row["PLAYER NAME"],
+
+            row["POS"],
+
+            row["TEAM"],
+
+            Number(row["BYE WEEK"])
+
+          );
+
+
+        }
+
+
+      }
+    );
+
+
+
+  insertMany();
+
+
+
+  console.log(
+    `Imported ${players.length} players`
+  );
+
+
+}
+
+
+
+importPlayers();import express from "express";
+import cors from "cors";
+import http from "http";
+import { Server } from "socket.io";
+
+
+import { initializeDatabase } from "./database/init";
+
+
+import {
+  initializeSocket
+} from "./socket";
+
+
+import teamRoutes from "./routes/teamRoutes";
+import playerRoutes from "./routes/playerRoutes";
+import gameRoutes from "./routes/gameRoutes";
+import rosterRoutes from "./routes/rosterRoutes";
+import bidRoutes from "./routes/bidRoutes";
+
+
+
+initializeDatabase();
+
+
+
+const app =
+  express();
+
+
+
+const server =
+  http.createServer(
+    app
+  );
+
+
+
+const io =
+  new Server(
+    server,
+    {
+      cors: {
+
+        origin:
+          "http://localhost:5173"
+
+      }
+
+    }
+  );
+
+
+
+initializeSocket(
+  io
+);
+
+
+
+
+
+io.on(
+  "connection",
+  (socket) => {
+
+
+    console.log(
+      "Socket connected:",
+      socket.id
+    );
+
+
+    socket.on(
+      "disconnect",
+      () => {
+
+
+        console.log(
+          "Socket disconnected:",
+          socket.id
+        );
+
+
+      }
+    );
+
+
+  }
+);
+
+
+
+
+
+
+app.use(
+  cors()
+);
+
+
+app.use(
+  express.json()
+);
+
+
+
+
+
+app.use(
+  "/api/team",
+  teamRoutes
+);
+
+
+
+app.use(
+  "/api/players",
+  playerRoutes
+);
+
+
+
+app.use(
+  "/api/game",
+  gameRoutes
+);
+
+
+
+app.use(
+  "/api/roster",
+  rosterRoutes
+);
+
+
+
+app.use(
+  "/api/bid",
+  bidRoutes
+);
+
+
+
+
+
+app.get(
+  "/",
+  (_req, res) => {
+
+
+    res.json({
+
+      message:
+        "Fantasy Auction Draft API"
+
+    });
+
+
+  }
+);
+
+
+
+
+
+
+const PORT =
+  3000;
+
+
+
+server.listen(
+  PORT,
+  () => {
+
+
+    console.log(
+      `Server running on port ${PORT}`
+    );
+
+
+  }
+);import {
+  Router
+} from "express";
+
+
+import {
+  getTeamRoster
+} from "../services/rosterService";
+
+
+
+const router =
+  Router();
+
+
+
+router.get(
+  "/:teamId",
+  (
+    req: any,
+    res: any
+  ) => {
+
+
+    const teamId =
+      Number(
+        req.params.teamId
+      );
+
+
+    const roster =
+      getTeamRoster(
+        teamId
+      );
+
+
+    res.json(
+      roster
+    );
+
+
+  }
+);
+
+
+
+export default router;import { Router } from "express";
+
+import {
+  playerService
+} from "../services/playerService";
+
+
+const router = Router();
+
+
+router.get(
+  "/",
+  (_req: any, res: any) => {
+
+    const players =
+      playerService.getAllPlayers();
+
+
+    res.json(players);
+
+  }
+);
+
+
+export default router;import { Router } from "express";
+
+import {
+  getGameState,
+  nominatePlayer
+} from "../services/gameService";
+
+import {
+  broadcastGameUpdated
+} from "../socket/socket";
+
+
+const router = Router();
+
+
+
+router.get(
+  "/",
+  (_req: any, res: any) => {
+
+    res.json(
+      getGameState()
+    );
+
+  }
+);
+
+
+
+router.post(
+  "/nominate/:playerId",
+  (req: any, res: any) => {
+
+    const playerId =
+      Number(
+        req.params.playerId
+      );
+
+
+    const game =
+      nominatePlayer(
+        playerId
+      );
+
+
+    broadcastGameUpdated(
+      game
+    );
+
+
+    res.json(
+      game
+    );
+
+  }
+);
+
+
+
+export default router;import { Router } from "express";
+
+
+import {
+  submitBid,
+  getCurrentAuctionBids,
+  resolveAuction
+} from "../services/bidService";
+
+
+const router =
+  Router();
+
+
+
+router.post(
+  "/",
+  (
+    req: any,
+    res: any
+  ) => {
+
+
+    try {
+
+
+      const {
+        teamId,
+        playerId,
+        amount
+      } = req.body;
+
+
+
+      const result =
+        submitBid(
+
+          Number(teamId),
+
+          Number(playerId),
+
+          Number(amount)
+
+        );
+
+
+
+      broadcastBidUpdated({
+
+        playerId:
+          Number(playerId),
+
+        teamId:
+          Number(teamId),
+
+        amount:
+          Number(amount)
+
+      });
+
+
+
+      res.json(
+        result
+      );
+
+
+    } catch (error: any) {
+
+
+      res
+        .status(400)
+        .json({
+
+          error:
+            error.message
+
+        });
+
+
+    }
+
+
+  }
+);
+
+
+
+
+
+
+router.get(
+  "/current/:playerId",
+  (
+    req: any,
+    res: any
+  ) => {
+
+
+    const playerId =
+      Number(
+        req.params.playerId
+      );
+
+
+
+    const bids =
+      getCurrentAuctionBids(
+        playerId
+      );
+
+
+
+    res.json(
+      bids
+    );
+
+
+  }
+);
+
+
+
+
+
+
+
+router.post(
+  "/resolve/:playerId",
+  (
+    req: any,
+    res: any
+  ) => {
+
+
+    try {
+
+
+      const playerId =
+        Number(
+          req.params.playerId
+        );
+
+
+
+      const result =
+        resolveAuction(
+          playerId
+        );
+
+
+      broadcastGameUpdated(
+        result
+      );
+
+
+      res.json(
+        result
+      );
+
+
+    } catch (error: any) {
+
+
+      res
+        .status(400)
+        .json({
+
+          error:
+            error.message
+
+        });
+
+
+    }
+
+
+  }
+);
+
+
+
+
+export default router;import { Router } from "express";
+
+
+import {
+  getTeams,
+  createTeam
+} from "../services/teamService";
+
+
+
+const router = Router();
+
+
+
+router.get(
+  "/",
+  (_req: any, res: any) => {
+
+    res.json(
+      getTeams()
+    );
+
+  }
+);
+
+
+
+router.post(
+  "/",
+  (req: any, res: any) => {
+
+
+    const name =
+      req.body.name;
+
+
+
+    if (!name) {
+
+      return res
+        .status(400)
+        .json({
+          error: "Team name required"
+        });
+
+    }
+
+
+
+    const team =
+      createTeam(name);
+
+
+
+    res.json(team);
+
+
+  }
+);
+
+
+
+export default router;import { db } from "../database/connection";
+
+
+export class PlayerService {
+
+
+  getAllPlayers() {
+
+
+    return db
+      .prepare(`
+
+        SELECT
+
+          id,
+
+          rank,
+
+          name,
+
+          position,
+
+          nfl_team,
+
+          bye_week,
+
+          drafted
+
+        FROM draft_players
+
+        ORDER BY rank
+
+      `)
+      .all();
+
+
+  }
+
+
+}
+
+
+export const playerService =
+  new PlayerService();import { db } from "../database/connection";
+
+
+export interface Team {
+
+  id: number;
+
+  name: string;
+
+  budget: number;
+
+  connected: number;
+
+}
+
+
+
+export function getTeams(): Team[] {
+
+
+  return db
+    .prepare(
+      `
+      SELECT
+
+        id,
+
+        name,
+
+        budget,
+
+        connected
+
+      FROM teams
+
+      ORDER BY id ASC
+
+      `
+    )
+    .all() as Team[];
+
+
+}
+
+
+
+export function createTeam(
+  name: string
+): Team {
+
+
+  const setting =
+    db
+      .prepare(
+        `
+        SELECT value
+        FROM settings
+        WHERE key = 'startingBudget'
+        `
+      )
+      .get() as {
+        value: string
+      };
+
+
+
+  const budget =
+    Number(setting.value);
+
+
+
+  const result =
+    db
+      .prepare(
+        `
+        INSERT INTO teams
+
+        (
+          name,
+          budget
+        )
+
+        VALUES
+
+        (
+          ?,
+          ?
+        )
+
+        `
+      )
+      .run(
+        name,
+        budget
+      );
+
+
+
+  return db
+    .prepare(
+      `
+      SELECT
+
+        id,
+
+        name,
+
+        budget,
+
+        connected
+
+      FROM teams
+
+      WHERE id = ?
+
+      `
+    )
+    .get(
+      result.lastInsertRowid
+    ) as Team;
+
+}import { db } from "../database/connection";
+
+
+export interface Bid {
+
+  id: number;
+
+  team_id: number;
+
+  player_id: number;
+
+  amount: number;
+
+  submitted_at: string;
+
+}
+
+
+
+export function submitBid(
+
+  teamId: number,
+
+  playerId: number,
+
+  amount: number
+
+) {
+
+
+  const team =
+    db
+      .prepare(
+        `
+        SELECT
+
+          id,
+
+          budget
+
+        FROM teams
+
+        WHERE id = ?
+
+        `
+      )
+      .get(teamId) as any;
+
+
+
+  if (!team) {
+
+    throw new Error(
+      "Team not found"
+    );
+
+  }
+
+
+
+  if (
+    amount <= 0
+  ) {
+
+    throw new Error(
+      "Invalid bid amount"
+    );
+
+  }
+
+
+
+  if (
+    amount > team.budget
+  ) {
+
+    throw new Error(
+      "Bid exceeds budget"
+    );
+
+  }
+
+
+
+  const existingBid =
+    db
+      .prepare(
+        `
+        SELECT
+
+          id
+
+        FROM auction_bids
+
+        WHERE
+
+          team_id = ?
+
+          AND
+
+          player_id = ?
+
+        `
+      )
+      .get(
+        teamId,
+        playerId
+      );
+
+
+
+  if (existingBid) {
+
+    throw new Error(
+      "Bid already submitted"
+    );
+
+  }
+
+
+
+  const result =
+    db
+      .prepare(
+        `
+        INSERT INTO auction_bids
+
+        (
+
+          team_id,
+
+          player_id,
+
+          amount
+
+        )
+
+        VALUES
+
+        (
+
+          ?,
+
+          ?,
+
+          ?
+
+        )
+
+        `
+      )
+      .run(
+
+        teamId,
+
+        playerId,
+
+        amount
+
+      );
+
+
+
+  return {
+
+    id:
+      result.lastInsertRowid,
+
+    message:
+      "Bid submitted"
+
+  };
+
+
+}
+
+
+
+
+export function getCurrentAuctionBids(
+
+  playerId: number
+
+): Bid[] {
+
+
+  return db
+    .prepare(
+      `
+      SELECT
+
+        id,
+
+        team_id,
+
+        player_id,
+
+        amount,
+
+        submitted_at
+
+      FROM auction_bids
+
+      WHERE player_id = ?
+
+      ORDER BY
+
+        amount DESC,
+
+        submitted_at ASC
+
+      `
+    )
+    .all(
+      playerId
+    ) as Bid[];
+
+}
+
+
+
+
+
+export function resolveAuction(
+
+  playerId: number
+
+) {
+
+
+  const winner =
+    db
+      .prepare(
+        `
+        SELECT
+
+          *
+
+        FROM auction_bids
+
+        WHERE player_id = ?
+
+        ORDER BY
+
+          amount DESC,
+
+          submitted_at ASC
+
+        LIMIT 1
+
+        `
+      )
+      .get(
+        playerId
+      ) as Bid | undefined;
+
+
+
+  if (!winner) {
+
+    return {
+
+      winner: null,
+
+      message:
+        "No bids submitted"
+
+    };
+
+  }
+
+
+
+  const player =
+    db
+      .prepare(
+        `
+        SELECT
+
+          id,
+
+          name,
+
+          position
+
+        FROM draft_players
+
+        WHERE id = ?
+
+        `
+      )
+      .get(
+        playerId
+      ) as any;
+
+
+
+  if (!player) {
+
+    throw new Error(
+      "Player not found"
+    );
+
+  }
+
+
+
+
+  const team =
+    db
+      .prepare(
+        `
+        SELECT
+
+          budget
+
+        FROM teams
+
+        WHERE id = ?
+
+        `
+      )
+      .get(
+        winner.team_id
+      ) as any;
+
+
+
+  if (
+    winner.amount > team.budget
+  ) {
+
+    throw new Error(
+      "Winning bid exceeds budget"
+    );
+
+  }
+
+
+
+
+  db.transaction(
+    () => {
+
+
+      db
+        .prepare(
+          `
+          UPDATE teams
+
+          SET
+
+            budget = budget - ?
+
+          WHERE id = ?
+
+          `
+        )
+        .run(
+
+          winner.amount,
+
+          winner.team_id
+
+        );
+
+
+
+
+      db
+        .prepare(
+          `
+          INSERT INTO roster
+
+          (
+
+            team_id,
+
+            player_id,
+
+            player_name,
+
+            position,
+
+            price,
+
+            slot
+
+          )
+
+          VALUES
+
+          (
+
+            ?,
+
+            ?,
+
+            ?,
+
+            ?,
+
+            ?,
+
+            ?
+
+          )
+
+          `
+        )
+        .run(
+
+          winner.team_id,
+
+          player.id,
+
+          player.name,
+
+          player.position,
+
+          winner.amount,
+
+          player.position
+
+        );
+
+
+
+
+      db
+        .prepare(
+          `
+          UPDATE game
+
+          SET
+
+            status = 'RESULT',
+
+            last_winner_team_id = ?,
+
+            last_winner_price = ?,
+
+            last_winner_player_id = ?
+
+          WHERE id = 1
+
+          `
+        )
+        .run(
+
+          winner.team_id,
+
+          winner.amount,
+
+          player.id
+
+        );
+
+
+    }
+
+  )();
+
+
+
+  return {
+
+    winnerTeamId:
+      winner.team_id,
+
+    playerId:
+      player.id,
+
+    playerName:
+      player.name,
+
+    price:
+      winner.amount
+
+  };
+
+
+}import { db } from "../database/connection";
+
+
+export interface RosterPlayer {
+
+  id: number;
+
+  player_id: number;
+
+  player_name: string;
+
+  position: string;
+
+  price: number;
+
+  slot: string;
+
+}
+
+
+
+export function getTeamRoster(
+  teamId: number
+): RosterPlayer[] {
+
+
+  return db
+    .prepare(
+      `
+      SELECT
+
+        id,
+
+        player_id,
+
+        player_name,
+
+        position,
+
+        price,
+
+        slot
+
+      FROM roster
+
+      WHERE team_id = ?
+
+      ORDER BY id ASC
+
+      `
+    )
+    .all(teamId) as RosterPlayer[];
+
+}import { db } from "../database/connection";
+
+
+export interface CurrentPlayer {
+
+  id: number;
+
+  rank: number;
+
+  name: string;
+
+  position: string;
+
+  nfl_team: string;
+
+  bye_week: number;
+
+  drafted: number;
+
+}
+
+
+
+export interface GameState {
+
+  id: number;
+
+  status: string;
+
+  currentPlayerId: number | null;
+
+  countdown: number;
+
+  currentBid: number;
+
+  currentBidTeamId: number | null;
+
+  currentPlayer: CurrentPlayer | null;
+
+}
+
+
+
+export function getGameState(): GameState {
+
+
+  const game =
+    db
+      .prepare(
+        `
+        SELECT
+
+          id,
+
+          status,
+
+          current_player_id as currentPlayerId,
+
+          countdown,
+
+          current_bid as currentBid,
+
+          current_bid_team_id as currentBidTeamId
+
+        FROM game
+
+        WHERE id = 1
+        `
+      )
+      .get() as GameState;
+
+
+
+  let currentPlayer = null;
+
+
+
+  if (
+    game.currentPlayerId
+  ) {
+
+
+    currentPlayer =
+      db
+        .prepare(
+          `
+          SELECT
+
+            id,
+
+            rank,
+
+            name,
+
+            position,
+
+            nfl_team,
+
+            bye_week,
+
+            drafted
+
+          FROM draft_players
+
+          WHERE id = ?
+
+          `
+        )
+        .get(
+          game.currentPlayerId
+        ) as CurrentPlayer;
+
+
+  }
+
+
+
+  return {
+
+    ...game,
+
+    currentPlayer
+
+  };
+
+
+}
+
+
+
+export function nominatePlayer(
+  playerId: number
+) {
+
+
+  db
+    .prepare(
+      `
+      UPDATE game
+
+      SET
+
+        status = 'AUCTION',
+
+        current_player_id = ?,
+
+        countdown = 30,
+
+        current_bid = 0,
+
+        current_bid_team_id = NULL
+
+      WHERE id = 1
+
+      `
+    )
+    .run(
+      playerId
+    );
+
+
+
+  return getGameState();
+
+}import { getSocket } from "./index";
+
+
+export function broadcastGameUpdated(
+  game: any
+) {
+
+  getSocket().emit(
+    "GAME_UPDATED",
+    game
+  );
+
+}
+
+
+export function broadcastTeamUpdated(
+  team: any
+) {
+
+  getSocket().emit(
+    "TEAM_UPDATED",
+    team
+  );
+
+}import { Server } from "socket.io";
+
+
+let io: Server;
+
+
+export function initializeSocket(
+  socketServer: Server
+) {
+
+  io = socketServer;
+
+}
+
+
+export function getSocket() {
+
+  if (!io) {
+
+    throw new Error(
+      "Socket.IO has not been initialized"
+    );
+
+  }
+
+
+  return io;
+
+}import {
+  getSocket
+} from "./index";
+
+
+
+export function broadcastBidUpdated(
+  bid: any
+) {
+
+
+  getSocket().emit(
+
+    "BID_UPDATED",
+
+    bid
+
+  );
+
+
+}
+
+
+export function broadcastGameUpdated(
+  game: any
+) {
+
+
+  getSocket().emit(
+
+    "GAME_UPDATED",
+
+    game
+
+  );
+
+
+}
