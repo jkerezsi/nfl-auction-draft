@@ -6,55 +6,64 @@ import {
 } from "../services/gameService";
 
 import {
-  broadcastGameUpdated
-} from "../socket/socket";
+  startAuctionTimer
+} from "../services/auctionTimerService";
 
 
-const router = Router();
-
+const router =
+  Router();
 
 
 router.get(
   "/",
   (_req: any, res: any) => {
-
-    res.json(
-      getGameState()
-    );
-
+    try {
+      res.json(
+        getGameState()
+      );
+    } catch (error: any) {
+      res
+        .status(400)
+        .json({
+          error: error.message
+        });
+    }
   }
 );
-
 
 
 router.post(
   "/nominate/:playerId",
   (req: any, res: any) => {
+    try {
+      const playerId =
+        Number(
+          req.params.playerId
+        );
 
-    const playerId =
-      Number(
-        req.params.playerId
+
+      const game =
+        nominatePlayer(playerId);
+
+
+      startAuctionTimer(
+        playerId,
+        game.countdown
       );
 
 
-    const game =
-      nominatePlayer(
-        playerId
+      res.json(
+        getGameState()
       );
-
-
-    broadcastGameUpdated(
-      game
-    );
-
-
-    res.json(
-      game
-    );
-
+    } catch (error: any) {
+      res
+        .status(400)
+        .json({
+          error: error.message
+        });
+    }
   }
 );
-
 
 
 export default router;

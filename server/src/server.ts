@@ -1,16 +1,22 @@
 import express from "express";
 import cors from "cors";
 import http from "http";
-import { Server } from "socket.io";
 
+import {
+  Server
+} from "socket.io";
 
-import { initializeDatabase } from "./database/init";
-
+import {
+  initializeDatabase
+} from "./database/init";
 
 import {
   initializeSocket
 } from "./socket";
 
+import {
+  resumeAuctionTimer
+} from "./services/auctionTimerService";
 
 import teamRoutes from "./routes/teamRoutes";
 import playerRoutes from "./routes/playerRoutes";
@@ -19,21 +25,15 @@ import rosterRoutes from "./routes/rosterRoutes";
 import bidRoutes from "./routes/bidRoutes";
 
 
-
 initializeDatabase();
-
 
 
 const app =
   express();
 
 
-
 const server =
-  http.createServer(
-    app
-  );
-
+  http.createServer(app);
 
 
 const io =
@@ -41,30 +41,19 @@ const io =
     server,
     {
       cors: {
-
         origin:
           "http://localhost:5173"
-
       }
-
     }
   );
 
 
-
-initializeSocket(
-  io
-);
-
-
-
+initializeSocket(io);
 
 
 io.on(
   "connection",
-  (socket) => {
-
-
+  socket => {
     console.log(
       "Socket connected:",
       socket.id
@@ -74,37 +63,26 @@ io.on(
     socket.on(
       "disconnect",
       () => {
-
-
         console.log(
           "Socket disconnected:",
           socket.id
         );
-
-
       }
     );
-
-
   }
 );
 
 
-
-
-
-
 app.use(
-  cors()
+  cors({
+    origin:
+      "http://localhost:5173"
+  })
 );
-
 
 app.use(
   express.json()
 );
-
-
-
 
 
 app.use(
@@ -112,28 +90,20 @@ app.use(
   teamRoutes
 );
 
-
-
 app.use(
   "/api/players",
   playerRoutes
 );
-
-
 
 app.use(
   "/api/game",
   gameRoutes
 );
 
-
-
 app.use(
   "/api/roster",
   rosterRoutes
 );
-
-
 
 app.use(
   "/api/bid",
@@ -141,44 +111,29 @@ app.use(
 );
 
 
-
-
-
 app.get(
   "/",
-  (_req, res) => {
-
-
+  (_req: any, res: any) => {
     res.json({
-
       message:
         "Fantasy Auction Draft API"
-
     });
-
-
   }
 );
-
-
-
-
 
 
 const PORT =
   3000;
 
 
-
 server.listen(
   PORT,
   () => {
-
-
     console.log(
       `Server running on port ${PORT}`
     );
 
 
+    resumeAuctionTimer();
   }
 );

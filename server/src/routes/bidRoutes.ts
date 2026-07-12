@@ -11,11 +11,16 @@ import {
 } from "../services/gameService";
 
 import {
+  stopAuctionTimer
+} from "../services/auctionTimerService";
+
+import {
   broadcastGameUpdated
 } from "../socket/socket";
 
 
-const router = Router();
+const router =
+  Router();
 
 
 router.post(
@@ -29,21 +34,74 @@ router.post(
       } = req.body;
 
 
-      const result = submitBid(
-        Number(teamId),
-        Number(playerId),
-        Number(amount)
+      const result =
+        submitBid(
+          Number(teamId),
+          Number(playerId),
+          Number(amount)
+        );
+
+
+      const gameAfterBid =
+        getGameState();
+
+
+      const everyoneSubmitted =
+        gameAfterBid.totalTeamCount > 0 &&
+        gameAfterBid.submittedBidCount >=
+          gameAfterBid.totalTeamCount;
+
+
+      if (everyoneSubmitted) {
+        stopAuctionTimer();
+
+
+        const auctionResult =
+          resolveAuction(
+            Number(playerId)
+          );
+
+
+        const finishedGame =
+          getGameState();
+
+
+        broadcastGameUpdated(
+          finishedGame
+        );
+
+
+        return res.json({
+          ...result,
+
+          auctionFinished: true,
+
+          auctionResult,
+
+          game:
+            finishedGame
+        });
+      }
+
+
+      // Public update contains only the submitted count.
+      // Bid amounts remain private.
+      broadcastGameUpdated(
+        gameAfterBid
       );
 
 
-      // Deliberately no socket broadcast here.
-      // A sealed bid is visible only to the submitting player.
-      res.json(result);
+      res.json({
+        ...result,
+
+        auctionFinished: false
+      });
     } catch (error: any) {
       res
         .status(400)
         .json({
-          error: error.message
+          error:
+            error.message
         });
     }
   }
@@ -54,8 +112,14 @@ router.get(
   "/current/:playerId",
   (req: any, res: any) => {
     try {
-      const game = getGameState();
-      const playerId = Number(req.params.playerId);
+      const playerId =
+        Number(
+          req.params.playerId
+        );
+
+
+      const game =
+        getGameState();
 
 
       if (
@@ -65,19 +129,27 @@ router.get(
         return res
           .status(403)
           .json({
-            error: "Bids remain hidden until the auction finishes"
+            error:
+              "Bids remain hidden until the auction finishes"
           });
       }
 
 
-      const bids = getCurrentAuctionBids(playerId);
+      const bids =
+        getCurrentAuctionBids(
+          playerId
+        );
 
-      res.json(bids);
+
+      res.json(
+        bids
+      );
     } catch (error: any) {
       res
         .status(400)
         .json({
-          error: error.message
+          error:
+            error.message
         });
     }
   }
@@ -88,13 +160,28 @@ router.post(
   "/resolve/:playerId",
   (req: any, res: any) => {
     try {
-      const playerId = Number(req.params.playerId);
+      const playerId =
+        Number(
+          req.params.playerId
+        );
 
-      const result = resolveAuction(playerId);
-      const game = getGameState();
+
+      stopAuctionTimer();
 
 
-      broadcastGameUpdated(game);
+      const result =
+        resolveAuction(
+          playerId
+        );
+
+
+      const game =
+        getGameState();
+
+
+      broadcastGameUpdated(
+        game
+      );
 
 
       res.json({
@@ -105,7 +192,8 @@ router.post(
       res
         .status(400)
         .json({
-          error: error.message
+          error:
+            error.message
         });
     }
   }

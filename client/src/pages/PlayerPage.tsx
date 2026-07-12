@@ -26,7 +26,7 @@ import {
 
 import type { Team } from "../types/team";
 import type { Player } from "../types/player";
-
+import TeamSelector from "../components/player/TeamSelector";
 
 type Tab =
   | "auction"
@@ -284,43 +284,21 @@ function PlayerPage() {
     game?.lastWinnerTeamId !== null &&
     game?.lastWinnerTeamId === selectedTeamId;
 
+if (!selectedTeam) {
 
-  if (!selectedTeam) {
-    return (
-      <div className="player-page">
-        <div className="player-card">
-          <h1>
-            Choose your team
-          </h1>
+  return (
 
-          {
-            error && (
-              <p>
-                {error}
-              </p>
-            )
-          }
+    <TeamSelector
 
-          {
-            teams.map(
-              team => (
-                <button
-                  key={team.id}
-                  className="team-button"
-                  onClick={
-                    () =>
-                      selectTeam(team.id)
-                  }
-                >
-                  {team.name}
-                </button>
-              )
-            )
-          }
-        </div>
-      </div>
-    );
-  }
+      teams={teams}
+
+      onSelect={selectTeam}
+
+    />
+
+  );
+
+}
 
 
   return (

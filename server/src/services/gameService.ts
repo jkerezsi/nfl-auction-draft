@@ -17,11 +17,14 @@ export interface GameState {
   status: string;
   currentPlayerId: number | null;
   countdown: number;
-  currentBid: number;
-  currentBidTeamId: number | null;
+
   lastWinnerTeamId: number | null;
   lastWinnerPrice: number | null;
   lastWinnerPlayerId: number | null;
+
+  submittedBidCount: number;
+  totalTeamCount: number;
+
   currentPlayer: CurrentPlayer | null;
 }
 
@@ -31,8 +34,7 @@ interface GameRow {
   status: string;
   currentPlayerId: number | null;
   countdown: number;
-  currentBid: number;
-  currentBidTeamId: number | null;
+
   lastWinnerTeamId: number | null;
   lastWinnerPrice: number | null;
   lastWinnerPlayerId: number | null;
@@ -40,32 +42,34 @@ interface GameRow {
 
 
 export function getGameState(): GameState {
-  const game = db
-    .prepare(
-      `
-      SELECT
-        id,
-        status,
-        current_player_id AS currentPlayerId,
-        countdown,
-        current_bid AS currentBid,
-        current_bid_team_id AS currentBidTeamId,
-        last_winner_team_id AS lastWinnerTeamId,
-        last_winner_price AS lastWinnerPrice,
-        last_winner_player_id AS lastWinnerPlayerId
-      FROM game
-      WHERE id = 1
-      `
-    )
-    .get() as GameRow | undefined;
+  const game =
+    db
+      .prepare(
+        `
+        SELECT
+          id,
+          status,
+          current_player_id AS currentPlayerId,
+          countdown,
+          last_winner_team_id AS lastWinnerTeamId,
+          last_winner_price AS lastWinnerPrice,
+          last_winner_player_id AS lastWinnerPlayerId
+        FROM game
+        WHERE id = 1
+        `
+      )
+      .get() as GameRow | undefined;
 
 
   if (!game) {
-    throw new Error("Game state not found");
+    throw new Error(
+      "Game state not found"
+    );
   }
 
 
-  let currentPlayer: CurrentPlayer | null = null;
+  let currentPlayer: CurrentPlayer | null =
+    null;
 
 
   if (game.currentPlayerId !== null) {
@@ -85,12 +89,58 @@ export function getGameState(): GameState {
           WHERE id = ?
           `
         )
-        .get(game.currentPlayerId) as CurrentPlayer | undefined ?? null;
+        .get(
+          game.currentPlayerId
+        ) as CurrentPlayer | undefined ?? null;
+  }
+
+
+  const totalTeamRow =
+    db
+      .prepare(
+        `
+        SELECT COUNT(*) AS count
+        FROM teams
+        `
+      )
+      .get() as {
+        count: number;
+      };
+
+
+  let submittedBidCount = 0;
+
+
+  if (game.currentPlayerId !== null) {
+    const submittedBidRow =
+      db
+        .prepare(
+          `
+          SELECT COUNT(*) AS count
+          FROM auction_bids
+          WHERE player_id = ?
+          `
+        )
+        .get(
+          game.currentPlayerId
+        ) as {
+          count: number;
+        };
+
+
+    submittedBidCount =
+      submittedBidRow.count;
   }
 
 
   return {
     ...game,
+
+    submittedBidCount,
+
+    totalTeamCount:
+      totalTeamRow.count,
+
     currentPlayer
   };
 }
@@ -99,32 +149,46 @@ export function getGameState(): GameState {
 export function nominatePlayer(
   playerId: number
 ): GameState {
-  if (!Number.isInteger(playerId) || playerId <= 0) {
-    throw new Error("Invalid player ID");
+  if (
+    !Number.isInteger(playerId) ||
+    playerId <= 0
+  ) {
+    throw new Error(
+      "Invalid player ID"
+    );
   }
 
 
-  const player = db
-    .prepare(
-      `
-      SELECT id, drafted
-      FROM draft_players
-      WHERE id = ?
-      `
-    )
-    .get(playerId) as {
-      id: number;
-      drafted: number;
-    } | undefined;
+  const player =
+    db
+      .prepare(
+        `
+        SELECT
+          id,
+          drafted
+        FROM draft_players
+        WHERE id = ?
+        `
+      )
+      .get(
+        playerId
+      ) as {
+        id: number;
+        drafted: number;
+      } | undefined;
 
 
   if (!player) {
-    throw new Error("Player not found");
+    throw new Error(
+      "Player not found"
+    );
   }
 
 
   if (player.drafted === 1) {
-    throw new Error("Player has already been drafted");
+    throw new Error(
+      "Player has already been drafted"
+    );
   }
 
 
@@ -135,8 +199,6 @@ export function nominatePlayer(
       status = 'AUCTION',
       current_player_id = ?,
       countdown = 30,
-      current_bid = 0,
-      current_bid_team_id = NULL,
       last_winner_team_id = NULL,
       last_winner_price = NULL,
       last_winner_player_id = NULL,
