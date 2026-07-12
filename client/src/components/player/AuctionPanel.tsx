@@ -1,4 +1,5 @@
 import Countdown from "./Countdown";
+import PlayerCard from "../../shared/playerCard";
 
 import type {
   GameState
@@ -47,94 +48,192 @@ export default function AuctionPanel({
       selectedTeamId;
 
 
-  if (!game?.currentPlayer) {
+  if (
+    !game?.currentPlayer
+  ) {
     return (
-      <div className="player-card">
+      <section className="player-card player-card--waiting">
         <h2>
-          Waiting for next player...
+          Waiting for next player
         </h2>
-      </div>
+
+        <p>
+          The commissioner has not started an auction yet.
+        </p>
+      </section>
     );
   }
 
 
-  if (auctionFinished) {
-    if (game.lastWinnerTeamId === null) {
-      return (
-        <div className="player-card">
-          <h2>
-            No bids received
-          </h2>
+  const currentPlayer =
+    game.currentPlayer;
 
-          <p>
-            {game.currentPlayer.name}
-            {" was not awarded."}
-          </p>
-        </div>
+
+  if (
+    auctionFinished
+  ) {
+    if (
+      game.lastWinnerTeamId === null
+    ) {
+      return (
+        <section className="player-card">
+          <div className="auction-result-heading">
+            <span className="auction-result-heading__icon">
+              —
+            </span>
+
+            <div>
+              <h2>
+                No bids received
+              </h2>
+
+              <p>
+                The player was not awarded.
+              </p>
+            </div>
+          </div>
+
+          <PlayerCard
+            name={
+              currentPlayer.name
+            }
+            position={
+              currentPlayer.position
+            }
+            nflTeam={
+              currentPlayer.nfl_team
+            }
+            rank={
+              currentPlayer.rank
+            }
+          />
+        </section>
       );
     }
 
 
-    if (wonAuction) {
+    if (
+      wonAuction
+    ) {
       return (
-        <div className="player-card">
-          <h2>
-            🏆 YOU WON
-          </h2>
+        <section className="player-card player-card--won">
+          <div className="auction-result-heading">
+            <span className="auction-result-heading__icon">
+              🏆
+            </span>
 
-          <p>
-            Player:
-          </p>
+            <div>
+              <h2>
+                You won
+              </h2>
 
-          <strong>
-            {game.currentPlayer.name}
-          </strong>
+              <p>
+                The player has been added to your team.
+              </p>
+            </div>
+          </div>
 
-          <p>
-            Price: ${game.lastWinnerPrice}
-          </p>
-        </div>
+          <PlayerCard
+            name={
+              currentPlayer.name
+            }
+            position={
+              currentPlayer.position
+            }
+            nflTeam={
+              currentPlayer.nfl_team
+            }
+            rank={
+              currentPlayer.rank
+            }
+            price={
+              game.lastWinnerPrice ??
+              undefined
+            }
+            result="won"
+          />
+        </section>
       );
     }
 
 
     return (
-      <div className="player-card">
-        <h2>
-          ❌ YOU LOST
-        </h2>
+      <section className="player-card player-card--lost">
+        <div className="auction-result-heading">
+          <span className="auction-result-heading__icon">
+            ✕
+          </span>
 
-        <p>
-          Player: {game.currentPlayer.name}
-        </p>
+          <div>
+            <h2>
+              You lost
+            </h2>
 
-        <p>
-          Winning bid: ${game.lastWinnerPrice}
-        </p>
-      </div>
+            <p>
+              Another team submitted the winning bid.
+            </p>
+          </div>
+        </div>
+
+        <PlayerCard
+          name={
+            currentPlayer.name
+          }
+          position={
+            currentPlayer.position
+          }
+          nflTeam={
+            currentPlayer.nfl_team
+          }
+          rank={
+            currentPlayer.rank
+          }
+          price={
+            game.lastWinnerPrice ??
+            undefined
+          }
+          result="lost"
+        />
+      </section>
     );
   }
 
 
   return (
-    <div className="player-card">
-      <h2>
-        {game.currentPlayer.name}
-      </h2>
-
-      <p>
-        {game.currentPlayer.position}
-        {" - "}
-        {game.currentPlayer.nfl_team}
-      </p>
-
-      <Countdown
-        seconds={game.countdown}
+    <section className="player-card auction-panel">
+      <PlayerCard
+        name={
+          currentPlayer.name
+        }
+        position={
+          currentPlayer.position
+        }
+        nflTeam={
+          currentPlayer.nfl_team
+        }
+        rank={
+          currentPlayer.rank
+        }
       />
+
+      <div className="auction-countdown-section">
+        <span className="auction-section-label">
+          Time remaining
+        </span>
+
+        <Countdown
+          seconds={
+            game.countdown
+          }
+        />
+      </div>
 
       {
         error && (
-          <p>
+          <p
+            className="player-error"
+            role="alert"
+          >
             {error}
           </p>
         )
@@ -142,38 +241,67 @@ export default function AuctionPanel({
 
       {
         bidSubmitted ? (
-          <div>
-            ✅ Bid locked
+          <div className="bid-locked">
+            <div className="bid-locked__title">
+              ✓ Bid locked
+            </div>
 
             <p>
-              Waiting for result...
+              Waiting for the auction result.
             </p>
           </div>
         ) : (
-          <>
-            <input
-              type="number"
-              inputMode="numeric"
-              min="1"
-              max={teamBudget}
-              placeholder="Your bid"
-              value={bidAmount}
-              onChange={
-                event =>
-                  onBidAmountChange(
-                    event.target.value
-                  )
-              }
-            />
+          <div className="bid-form">
+            <label
+              className="bid-form__label"
+              htmlFor="bid-amount"
+            >
+              Your bid
+            </label>
+
+            <div className="bid-form__input-wrapper">
+              <span className="bid-form__currency">
+                $
+              </span>
+
+              <input
+                id="bid-amount"
+                className="bid-form__input"
+                type="number"
+                inputMode="numeric"
+                min="1"
+                max={
+                  teamBudget
+                }
+                placeholder="0"
+                value={
+                  bidAmount
+                }
+                onChange={
+                  event =>
+                    onBidAmountChange(
+                      event.target.value
+                    )
+                }
+              />
+            </div>
+
+            <div className="bid-form__budget">
+              Available budget: ${teamBudget}
+            </div>
 
             <button
-              onClick={onSubmitBid}
+              className="bid-form__submit"
+              type="button"
+              onClick={
+                onSubmitBid
+              }
             >
               Submit Bid
             </button>
-          </>
+          </div>
         )
       }
-    </div>
+    </section>
   );
 }
