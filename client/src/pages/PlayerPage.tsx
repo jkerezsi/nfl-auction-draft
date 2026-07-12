@@ -18,40 +18,46 @@ import {
 
 import socket from "../services/socket";
 
+import MyTeamPanel from "../components/player/MyTeamPanel";
+
+import {
+  getRoster
+} from "../services/rosterService";
+
+import type {
+  TeamRoster
+} from "../types/roster";
+
 import {
   saveTeamId,
   getTeamId,
   clearTeamId
 } from "../services/sessionService";
 
-import type { Team } from "../types/team";
-import type { Player } from "../types/player";
 import TeamSelector from "../components/player/TeamSelector";
+import AuctionPanel from "../components/player/AuctionPanel";
+
+import type {
+  Team
+} from "../types/team";
+
+import type {
+  GameState
+} from "../types/game";
+
 
 type Tab =
   | "auction"
   | "team";
 
 
-interface GameState {
-  id: number;
-  status: string;
-  currentPlayerId: number | null;
-  countdown: number;
-  currentBid: number;
-  currentBidTeamId: number | null;
-  lastWinnerTeamId: number | null;
-  lastWinnerPrice: number | null;
-  lastWinnerPlayerId: number | null;
-  currentPlayer: Player | null;
-}
-
-
 function getBidStorageKey(
   teamId: number,
   playerId: number
 ) {
-  return `fantasy_bid_submitted_${teamId}_${playerId}`;
+  return (
+    `fantasy_bid_submitted_${teamId}_${playerId}`
+  );
 }
 
 
@@ -65,7 +71,14 @@ function PlayerPage() {
     );
 
   const [game, setGame] =
-    useState<GameState | null>(null);
+    useState<GameState | null>(
+      null
+    );
+  
+  const [roster, setRoster] =
+  useState<TeamRoster | null>(
+    null
+  );
 
   const [bidAmount, setBidAmount] =
     useState("");
@@ -74,13 +87,17 @@ function PlayerPage() {
     useState(false);
 
   const [activeTab, setActiveTab] =
-    useState<Tab>("auction");
+    useState<Tab>(
+      "auction"
+    );
 
   const [error, setError] =
     useState("");
 
   const currentPlayerIdRef =
-    useRef<number | null>(null);
+    useRef<number | null>(
+      null
+    );
 
 
   useEffect(
@@ -92,18 +109,33 @@ function PlayerPage() {
       function handleGameUpdated(
         updatedGame: GameState
       ) {
+        const previousPlayerId =
+          currentPlayerIdRef.current;
+
+
         const isNewAuctionPlayer =
           updatedGame.status === "AUCTION" &&
           updatedGame.currentPlayerId !== null &&
           updatedGame.currentPlayerId !==
-            currentPlayerIdRef.current;
+            previousPlayerId;
 
 
         currentPlayerIdRef.current =
           updatedGame.currentPlayerId;
 
 
-        setGame(updatedGame);
+        setGame(
+          updatedGame
+        );
+
+        if (
+          updatedGame.status === "RESULT" &&
+          selectedTeamId
+        ) {
+          loadRoster(
+            selectedTeamId
+          );
+        }
 
 
         if (
@@ -118,15 +150,20 @@ function PlayerPage() {
 
 
           setBidSubmitted(
-            localStorage.getItem(storageKey) === "true"
+            localStorage.getItem(
+              storageKey
+            ) === "true"
           );
+
 
           setBidAmount("");
           setError("");
         }
 
 
-        if (updatedGame.status === "RESULT") {
+        if (
+          updatedGame.status === "RESULT"
+        ) {
           void loadTeams();
         }
       }
@@ -151,10 +188,17 @@ function PlayerPage() {
 
   async function loadTeams() {
     try {
-      const data = await getTeams();
-      setTeams(data);
+      const data =
+        await getTeams();
+
+
+      setTeams(
+        data
+      );
     } catch {
-      setError("Could not load teams.");
+      setError(
+        "Could not load teams."
+      );
     }
   }
 
@@ -162,14 +206,16 @@ function PlayerPage() {
   async function loadGame() {
     try {
       const data =
-        await getGameState() as GameState;
+        await getGameState();
 
 
       currentPlayerIdRef.current =
         data.currentPlayerId;
 
 
-      setGame(data);
+      setGame(
+        data
+      );
 
 
       if (
@@ -185,11 +231,24 @@ function PlayerPage() {
 
 
         setBidSubmitted(
-          localStorage.getItem(storageKey) === "true"
+          localStorage.getItem(
+            storageKey
+          ) === "true"
         );
       }
+      if (
+        selectedTeamId
+      ) {
+
+        loadRoster(
+          selectedTeamId
+        );
+
+}
     } catch {
-      setError("Could not load the current auction.");
+      setError(
+        "Could not load the current auction."
+      );
     }
   }
 
@@ -197,8 +256,16 @@ function PlayerPage() {
   function selectTeam(
     teamId: number
   ) {
-    saveTeamId(teamId);
-    setSelectedTeamId(teamId);
+    saveTeamId(
+      teamId
+    );
+
+
+    setSelectedTeamId(
+      teamId
+    );
+
+
     setError("");
   }
 
@@ -206,11 +273,45 @@ function PlayerPage() {
   function changeTeam() {
     clearTeamId();
 
-    setSelectedTeamId(null);
-    setBidSubmitted(false);
+
+    setSelectedTeamId(
+      null
+    );
+
+
+    setBidSubmitted(
+      false
+    );
+
+
     setBidAmount("");
     setError("");
   }
+
+async function loadRoster(
+  teamId: number
+) {
+
+  try {
+
+    const data =
+      await getRoster(
+        teamId
+      );
+
+    setRoster(
+      data
+    );
+
+  } catch {
+
+    setRoster(
+      null
+    );
+
+  }
+
+}
 
 
   async function placeBid() {
@@ -227,7 +328,9 @@ function PlayerPage() {
 
 
       const amount =
-        Number(bidAmount);
+        Number(
+          bidAmount
+        );
 
 
       if (
@@ -258,7 +361,9 @@ function PlayerPage() {
       );
 
 
-      setBidSubmitted(true);
+      setBidSubmitted(
+        true
+      );
     } catch (requestError: any) {
       setError(
         requestError.response?.data?.error ??
@@ -275,30 +380,14 @@ function PlayerPage() {
     );
 
 
-  const auctionFinished =
-    game?.status === "RESULT";
-
-
-  const wonAuction =
-    auctionFinished &&
-    game?.lastWinnerTeamId !== null &&
-    game?.lastWinnerTeamId === selectedTeamId;
-
-if (!selectedTeam) {
-
-  return (
-
-    <TeamSelector
-
-      teams={teams}
-
-      onSelect={selectTeam}
-
-    />
-
-  );
-
-}
+  if (!selectedTeam) {
+    return (
+      <TeamSelector
+        teams={teams}
+        onSelect={selectTeam}
+      />
+    );
+  }
 
 
   return (
@@ -313,140 +402,38 @@ if (!selectedTeam) {
         </div>
       </div>
 
-      {
-        error && (
-          <div className="player-card">
-            <p>
-              {error}
-            </p>
-          </div>
-        )
-      }
+      <div className="player-content">
+        {
+          activeTab === "auction" && (
+            <AuctionPanel
+              game={game}
+              bidAmount={bidAmount}
+              bidSubmitted={bidSubmitted}
+              selectedTeamId={
+                selectedTeam.id
+              }
+              teamBudget={
+                selectedTeam.budget
+              }
+              error={error}
+              onBidAmountChange={
+                setBidAmount
+              }
+              onSubmitBid={
+                placeBid
+              }
+            />
+          )
+        }
 
-      {
-        activeTab === "auction" && (
-          <div className="player-card">
-            {
-              auctionFinished ? (
-                game?.lastWinnerTeamId === null ? (
-                  <div>
-                    <h2>
-                      No bids received
-                    </h2>
-
-                    <p>
-                      This player was not awarded.
-                    </p>
-                  </div>
-                ) : wonAuction ? (
-                  <div>
-                    <h2>
-                      🏆 YOU WON
-                    </h2>
-
-                    <p>
-                      Player:
-                    </p>
-
-                    <strong>
-                      {game?.currentPlayer?.name}
-                    </strong>
-
-                    <p>
-                      Price: ${game?.lastWinnerPrice}
-                    </p>
-                  </div>
-                ) : (
-                  <div>
-                    <h2>
-                      ❌ YOU LOST
-                    </h2>
-
-                    <p>
-                      Player:{" "}
-                      {game?.currentPlayer?.name}
-                    </p>
-
-                    <p>
-                      Winning bid:{" "}
-                      ${game?.lastWinnerPrice}
-                    </p>
-                  </div>
-                )
-              ) : game?.currentPlayer ? (
-                <>
-                  <h2>
-                    {game.currentPlayer.name}
-                  </h2>
-
-                  <p>
-                    {game.currentPlayer.position}
-                    {" - "}
-                    {game.currentPlayer.nfl_team}
-                  </p>
-
-                  <p>
-                    Time: {game.countdown}s
-                  </p>
-
-                  {
-                    bidSubmitted ? (
-                      <div>
-                        ✅ Bid locked
-
-                        <p>
-                          Waiting for result...
-                        </p>
-                      </div>
-                    ) : (
-                      <>
-                        <input
-                          type="number"
-                          inputMode="numeric"
-                          min="1"
-                          max={selectedTeam.budget}
-                          placeholder="Your bid"
-                          value={bidAmount}
-                          onChange={
-                            event =>
-                              setBidAmount(
-                                event.target.value
-                              )
-                          }
-                        />
-
-                        <button
-                          onClick={placeBid}
-                        >
-                          Submit Bid
-                        </button>
-                      </>
-                    )
-                  }
-                </>
-              ) : (
-                <h2>
-                  Waiting for next player...
-                </h2>
-              )
-            }
-          </div>
-        )
-      }
-
-      {
-        activeTab === "team" && (
-          <div className="player-card">
-            <h2>
-              My Team
-            </h2>
-
-            <p>
-              Roster display is the next milestone.
-            </p>
-          </div>
-        )
-      }
+        {
+          activeTab === "team" && (
+          <MyTeamPanel
+            roster={roster}
+          />
+          )
+        }
+      </div>
 
       <div className="player-nav">
         <button
@@ -457,7 +444,9 @@ if (!selectedTeam) {
           }
           onClick={
             () =>
-              setActiveTab("auction")
+              setActiveTab(
+                "auction"
+              )
           }
         >
           Auction
@@ -471,7 +460,9 @@ if (!selectedTeam) {
           }
           onClick={
             () =>
-              setActiveTab("team")
+              setActiveTab(
+                "team"
+              )
           }
         >
           My Team
