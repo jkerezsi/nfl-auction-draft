@@ -1,0 +1,251 @@
+RK,TIERS,PLAYER NAME,TEAM,POS,BYE WEEK,UPSIDE ,BUST ,SOS SEASON,ECR VS. ADP,AUCTION VALUE,VALUE MATCH STATUS
+1,1,Jahmyr Gibbs,DET,RB1,6,Coach Upside rating,Coach Bust rating,5 out of 5 stars,0,57,Matched by normalized name
+2,1,Bijan Robinson,ATL,RB2,11,Coach Upside rating,Coach Bust rating,2 out of 5 stars,0,56,Matched by normalized name
+3,1,Ja'Marr Chase,CIN,WR1,6,Coach Upside rating,Coach Bust rating,4 out of 5 stars,0,55,Matched by normalized name
+4,1,Puka Nacua,LAR,WR2,11,Coach Upside rating,Coach Bust rating,1 out of 5 stars,0,56,Matched by normalized name
+5,1,Jaxon Smith-Njigba,SEA,WR3,11,Coach Upside rating,Coach Bust rating,3 out of 5 stars,0,54,Matched by normalized name
+6,2,Jonathan Taylor,IND,RB3,13,Coach Upside rating,Coach Bust rating,4 out of 5 stars,0,52,Matched by normalized name
+7,2,Amon-Ra St. Brown,DET,WR4,6,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+1,52,Matched by normalized name
+8,2,Christian McCaffrey,SF,RB4,8,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-1,53,Matched by normalized name
+9,2,CeeDee Lamb,DAL,WR5,14,Coach Upside rating,Coach Bust rating,2 out of 5 stars,0,51,Matched by normalized name
+10,2,James Cook III,BUF,RB5,7,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+2,46,Matched by normalized name
+11,2,Justin Jefferson,MIN,WR6,6,Coach Upside rating,Coach Bust rating,5 out of 5 stars,-1,48,Matched by normalized name
+12,3,Nico Collins,HOU,WR7,8,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+10,31,Matched by normalized name
+13,3,Drake London,ATL,WR8,11,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+7,45,Matched by normalized name
+14,3,Derrick Henry,BAL,RB6,13,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+4,50,Matched by normalized name
+15,3,Ashton Jeanty,LV,RB7,13,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-4,37,Matched by normalized name
+16,3,Brock Bowers,LV,TE1,13,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+5,32,Matched by normalized name
+17,3,A.J. Brown,NE,WR9,11,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+2,30,Matched by normalized name
+18,3,Saquon Barkley,PHI,RB8,10,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-5,35,Matched by normalized name
+19,3,George Pickens,DAL,WR10,14,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+5,30,Matched by normalized name
+20,3,De'Von Achane,MIA,RB9,6,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-4,42,Matched by normalized name
+21,4,Trey McBride,ARI,TE2,14,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+7,40,Matched by normalized name
+22,4,Josh Allen,BUF,QB1,7,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+12,22,Matched by normalized name
+23,4,Omarion Hampton,LAC,RB10,7,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-9,36,Matched by normalized name
+24,4,Chris Olave,NO,WR11,8,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+5,25,Matched by normalized name
+25,4,Kenneth Walker III,KC,RB11,5,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-10,32,Matched by normalized name
+26,4,Chase Brown,CIN,RB12,6,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-9,27,Matched by normalized name
+27,4,Rashee Rice,KC,WR12,5,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-1,43,Matched by normalized name
+28,4,Tee Higgins,CIN,WR13,6,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+5,17,Matched by normalized name
+29,4,Drake Maye,NE,QB2,11,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+38,10,Matched by normalized name
+30,4,Lamar Jackson,BAL,QB3,13,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+26,10,Matched by normalized name
+31,4,Tetairoa McMillan,CAR,WR14,5,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+8,29,Matched by normalized name
+32,4,Kyren Williams,LAR,RB13,11,Coach Upside rating,Coach Bust rating,5 out of 5 stars,0,26,Matched by normalized name
+33,5,Josh Jacobs,GB,RB14,11,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+8,34,Matched by normalized name
+34,5,Malik Nabers,NYG,WR15,8,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+2,18,Matched by normalized name
+35,5,DeVonta Smith,PHI,WR16,10,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-10,19,Matched by normalized name
+36,5,Zay Flowers,BAL,WR17,13,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-6,23,Matched by normalized name
+37,5,Colston Loveland,CHI,TE3,10,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+10,13,Matched by normalized name
+38,5,Javonte Williams,DAL,RB15,14,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-1,22,Matched by normalized name
+39,5,Jeremiyah Love,ARI,RB16,14,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-16,38,Matched by normalized name
+40,5,Joe Burrow,CIN,QB4,6,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+26,5,Matched by normalized name
+41,5,Emeka Egbuka,TB,WR18,10,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-3,24,Matched by normalized name
+42,5,Breece Hall,NYJ,RB17,13,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-15,33,Matched by normalized name
+43,5,Davante Adams,LAR,WR19,11,Coach Upside rating,Coach Bust rating,1 out of 5 stars,+7,22,Matched by normalized name
+44,5,Jameson Williams,DET,WR20,6,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+5,17,Matched by normalized name
+45,5,Ladd McConkey,LAC,WR21,7,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-10,15,Matched by normalized name
+46,5,Terry McLaurin,WAS,WR22,7,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-1,14,Matched by normalized name
+47,5,Travis Etienne Jr.,NO,RB18,8,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-16,21,Matched by normalized name
+48,6,Christian Watson,GB,WR23,11,Coach Upside rating,Coach Bust rating,5 out of 5 stars,+10,6,Matched by normalized name
+49,6,Jaylen Waddle,DEN,WR24,10,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-3,12,Matched by normalized name
+50,6,Garrett Wilson,NYJ,WR25,13,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-10,28,Matched by normalized name
+51,6,Jayden Daniels,WAS,QB5,7,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+14,10,Matched by normalized name
+52,6,Luther Burden III,CHI,WR26,10,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-10,10,Matched by normalized name
+53,6,Bucky Irving,TB,RB19,10,Coach Upside rating,Coach Bust rating,2 out of 5 stars,0,19,Matched by normalized name
+54,6,Tucker Kraft,GB,TE4,11,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+29,2,Matched by normalized name
+55,6,Cam Skattebo,NYG,RB20,8,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-12,20,Matched by normalized name
+56,6,Quinshon Judkins,CLE,RB21,11,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-2,21,Matched by normalized name
+57,6,Mike Evans,SF,WR27,8,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-13,5,Matched by normalized name
+58,6,D'Andre Swift,CHI,RB22,10,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-7,8,Matched by normalized name
+59,6,Rome Odunze,CHI,WR28,10,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+1,15,Matched by normalized name
+60,6,Jalen Hurts,PHI,QB6,10,Coach Upside rating,Coach Bust rating,5 out of 5 stars,+11,9,Matched by normalized name
+61,6,TreVeyon Henderson,NE,RB23,11,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-9,9,Matched by normalized name
+62,6,David Montgomery,HOU,RB24,8,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-14,7,Matched by normalized name
+63,6,DJ Moore,BUF,WR29,7,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-6,11,Matched by normalized name
+64,6,Tyler Warren,IND,TE5,13,Coach Upside rating,Coach Bust rating,3 out of 5 stars,0,13,Matched by normalized name
+65,6,Bhayshul Tuten,JAC,RB25,7,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-10,9,Matched by normalized name
+66,6,Jadarian Price,SEA,RB26,11,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-4,8,Matched by normalized name
+67,6,Caleb Williams,CHI,QB7,10,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+3,3,Matched by normalized name
+68,7,Justin Herbert,LAC,QB8,7,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+13,3,Matched by normalized name
+69,7,Alec Pierce,IND,WR30,13,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+10,7,Matched by normalized name
+70,7,Carnell Tate,TEN,WR31,9,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-11,11,Matched by normalized name
+71,7,Marvin Harrison Jr.,ARI,WR32,14,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-2,7,Matched by normalized name
+72,7,DK Metcalf,PIT,WR33,9,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+6,6,Matched by normalized name
+73,7,Jaylen Warren,PIT,RB27,9,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+1,2,Matched by normalized name
+74,7,Trevor Lawrence,JAC,QB9,7,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+11,4,Matched by normalized name
+75,7,Tony Pollard,TEN,RB28,9,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-3,8,Matched by normalized name
+76,7,Brian Thomas Jr.,JAC,WR34,7,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-15,4,Matched by normalized name
+77,7,Chuba Hubbard,CAR,RB29,5,Coach Upside rating,Coach Bust rating,1 out of 5 stars,-2,2,Matched by normalized name
+78,7,Rico Dowdle,PIT,RB30,9,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+9,3,Matched by normalized name
+79,7,Courtland Sutton,DEN,WR35,10,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+3,7,Matched by normalized name
+80,7,Sam LaPorta,DET,TE6,6,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+16,6,Matched by normalized name
+81,7,Rhamondre Stevenson,NE,RB31,11,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-4,2,Matched by normalized name
+82,7,Dak Prescott,DAL,QB10,14,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-2,4,Matched by normalized name
+83,7,Harold Fannin Jr.,CLE,TE7,11,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+21,6,Matched by normalized name
+84,7,Blake Corum,LAR,RB32,11,Coach Upside rating,Coach Bust rating,5 out of 5 stars,+8,1,Matched by normalized name
+85,7,Jaxson Dart,NYG,QB11,8,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+15,5,Matched by normalized name
+86,7,Kyle Pitts Sr.,ATL,TE8,11,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+20,6,Matched by normalized name
+87,7,Kyle Monangai,CHI,RB33,10,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+6,2,Matched by normalized name
+88,7,Jordyn Tyson,NO,WR36,8,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-25,6,Matched by normalized name
+89,7,J.K. Dobbins,DEN,RB34,10,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+9,2,Matched by normalized name
+90,7,Parker Washington,JAC,WR37,7,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-22,5,Matched by normalized name
+91,7,RJ Harvey,DEN,RB35,10,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-5,2,Matched by normalized name
+92,7,Makai Lemon,PHI,WR38,10,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-19,4,Matched by normalized name
+93,8,Brock Purdy,SF,QB12,8,Coach Upside rating,Coach Bust rating,1 out of 5 stars,+2,4,Matched by normalized name
+94,8,Chris Godwin Jr.,TB,WR39,10,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-6,1,Matched by normalized name
+95,8,Jordan Addison,MIN,WR40,6,Coach Upside rating,Coach Bust rating,5 out of 5 stars,-6,3,Matched by normalized name
+96,8,Dalton Kincaid,BUF,TE9,7,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+31,2,Matched by normalized name
+97,8,Quentin Johnston,LAC,WR41,7,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-21,1,Matched by normalized name
+98,8,Michael Wilson,ARI,WR42,14,Coach Upside rating–No rating available,Coach Bust rating–No rating available,2 out of 5 stars,-1,3,Matched by normalized name
+99,8,Patrick Mahomes II,KC,QB13,5,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-8,3,Matched by normalized name
+100,8,Bo Nix,DEN,QB14,10,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+7,4,Matched by normalized name
+101,8,Matthew Stafford,LAR,QB15,11,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+4,4,Matched by normalized name
+102,8,George Kittle,SF,TE10,8,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+12,2,Matched by normalized name
+103,8,Jakobi Meyers,JAC,WR43,7,Coach Upside rating,Coach Bust rating,4 out of 5 stars,0,3,Matched by normalized name
+104,8,Jacory Croskey-Merritt,WAS,RB36,7,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+17,2,Matched by normalized name
+105,8,Ricky Pearsall,SF,WR44,8,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-6,3,Matched by normalized name
+106,8,Aaron Jones Sr.,MIN,RB37,6,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+10,2,Matched by normalized name
+107,8,Jared Goff,DET,QB16,6,Coach Upside rating,Coach Bust rating,5 out of 5 stars,+2,1,Matched by normalized name
+108,8,Travis Kelce,KC,TE11,5,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+12,2,Matched by normalized name
+109,8,Kenny Gainwell,TB,RB38,10,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-1,2,Matched by normalized name
+110,8,Rachaad White,WAS,RB39,7,Coach Upside rating,Coach Bust rating,4 out of 5 stars,0,2,Matched by normalized name
+111,8,Jayden Reed,GB,WR45,11,Coach Upside rating,Coach Bust rating,5 out of 5 stars,-27,2,Matched by normalized name
+112,8,Kyler Murray,MIN,QB17,6,Coach Upside rating,Coach Bust rating,5 out of 5 stars,0,1,Matched by normalized name
+113,8,Michael Pittman Jr.,PIT,WR46,9,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-12,4,Matched by normalized name
+114,8,Jordan Mason,MIN,RB40,6,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+8,1,Matched by normalized name
+115,8,Dallas Goedert,PHI,TE12,10,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+21,2,Matched by normalized name
+116,8,Isaiah Likely,NYG,TE13,8,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+14,2,Matched by normalized name
+117,8,Xavier Worthy,KC,WR47,5,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-23,1,Matched by normalized name
+118,8,Mark Andrews,BAL,TE14,13,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+7,2,Matched by normalized name
+119,8,Wan'Dale Robinson,TEN,WR48,9,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-4,3,Matched by normalized name
+120,8,Jordan Love,GB,QB18,11,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-7,0,Matched by normalized name
+121,9,Baker Mayfield,TB,QB19,10,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-3,1,Matched by normalized name
+122,9,Jayden Higgins,HOU,WR49,8,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+2,1,Matched by normalized name
+123,9,Chris Rodriguez Jr.,JAC,RB41,7,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+6,1,Matched by normalized name
+124,9,Tyler Shough,NO,QB20,8,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-1,1,Matched by normalized name
+125,9,Jake Ferguson,DAL,TE15,14,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+3,2,Matched by normalized name
+126,9,Josh Downs,IND,WR50,13,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-36,1,Matched by normalized name
+127,9,Tyrone Tracy Jr.,NYG,RB42,8,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+6,1,Matched by normalized name
+128,9,Woody Marks,HOU,RB43,8,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+15,1,Matched by normalized name
+129,9,Zach Charbonnet,SEA,RB44,11,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+29,1,Matched by normalized name
+130,9,Romeo Doubs,NE,WR51,11,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-13,1,Matched by normalized name
+131,9,Tyler Allgeier,ARI,RB45,14,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+30,0,Matched by normalized name
+132,9,Malik Willis,MIA,QB21,6,Coach Upside rating,Coach Bust rating,3 out of 5 stars,0,1,Matched by normalized name
+133,9,Jonathon Brooks,CAR,RB46,5,Coach Upside rating,Coach Bust rating,1 out of 5 stars,-31,2,Matched by normalized name
+134,9,KC Concepcion,CLE,WR52,11,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-15,2,Matched by normalized name
+135,9,Khalil Shakir,BUF,WR53,7,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-9,2,Matched by normalized name
+136,9,Matthew Golden,GB,WR54,11,Coach Upside rating,Coach Bust rating,5 out of 5 stars,-25,4,Matched by normalized name
+137,9,C.J. Stroud,HOU,QB22,8,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+2,0,Matched by normalized name
+138,9,Oronde Gadsden II,LAC,TE16,7,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+8,0,Matched by normalized name
+139,9,Jalen Coker,CAR,WR55,5,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-8,1,Matched by normalized name
+140,9,Isiah Pacheco,DET,RB47,6,Coach Upside rating,Coach Bust rating,5 out of 5 stars,+8,1,Matched by normalized name
+141,9,Sam Darnold,SEA,QB23,11,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-1,0,Matched by normalized name
+142,9,Hunter Henry,NE,TE17,11,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+8,2,Matched by normalized name
+143,9,Rashid Shaheed,SEA,WR56,11,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-8,1,Matched by normalized name
+144,9,Brenton Strange,JAC,TE18,7,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+7,1,Matched by normalized name
+145,9,Juwan Johnson,NO,TE19,8,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+10,0,Matched by normalized name
+146,9,Alvin Kamara,NO,RB48,8,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+35,1,Matched by normalized name
+147,9,Brian Robinson Jr.,ATL,RB49,11,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+21,1,Matched by normalized name
+148,9,Dylan Sampson,CLE,RB50,11,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+25,0,Matched by normalized name
+149,9,Keaton Mitchell,LAC,RB51,7,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-12,0,Matched by normalized name
+150,9,Tank Bigsby,PHI,RB52,10,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+14,1,Matched by normalized name
+151,9,Cam Ward,TEN,QB24,9,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-13,0,Matched by normalized name
+152,9,Tyjae Spears,TEN,RB53,9,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+4,1,Matched by normalized name
+153,10,Jonah Coleman,DEN,RB54,10,Coach Upside rating,Coach Bust rating,2 out of 5 stars,0,0,Matched by normalized name
+154,10,Braelon Allen,NYJ,RB55,13,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+48,1,Matched by normalized name
+155,10,Houston Texans,HOU,DST1,8,Coach Upside rating–No rating available,Coach Bust rating–No rating available,2 out of 5 stars,-,1,DST team match
+156,10,Jerry Jeudy,CLE,WR57,11,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+21,1,Matched by normalized name
+157,10,Jauan Jennings,MIN,WR58,6,Coach Upside rating,Coach Bust rating,5 out of 5 stars,-8,0,Matched by normalized name
+158,10,Omar Cooper Jr.,NYJ,WR59,13,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-16,1,Matched by normalized name
+159,10,Bryce Young,CAR,QB25,5,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-2,0,Matched by normalized name
+160,10,Daniel Jones,IND,QB26,13,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-15,1,Matched by normalized name
+161,10,Denzel Boston,CLE,WR60,11,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-7,1,Matched by normalized name
+162,10,Jalen McMillan,TB,WR61,10,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-18,1,Matched by normalized name
+163,10,Denver Broncos,DEN,DST2,10,Coach Upside rating–No rating available,Coach Bust rating–No rating available,4 out of 5 stars,-,1,DST team match
+164,10,Chig Okonkwo,WAS,TE20,7,Coach Upside rating,Coach Bust rating,1 out of 5 stars,-23,0,Matched by normalized name
+165,10,Travis Hunter,JAC,WR62,7,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-,1,Matched by normalized name
+166,10,Adonai Mitchell,NYJ,WR63,13,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+6,1,Matched by normalized name
+167,10,Kayshon Boutte,NE,WR64,11,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+46,0,Not found in PDF - defaulted to 0
+168,10,Emanuel Wilson,SEA,RB56,11,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+82,0,Not found in PDF - defaulted to 0
+169,10,Seattle Seahawks,SEA,DST3,11,Coach Upside rating–No rating available,Coach Bust rating–No rating available,2 out of 5 stars,-,1,DST team match
+170,10,Los Angeles Rams,LAR,DST4,11,Coach Upside rating–No rating available,Coach Bust rating–No rating available,2 out of 5 stars,-,1,DST team match
+171,10,Philadelphia Eagles,PHI,DST5,10,Coach Upside rating–No rating available,Coach Bust rating–No rating available,0 out of 5 stars,-,1,DST team match
+172,10,Tre Tucker,LV,WR65,13,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-20,1,Matched by normalized name
+173,10,Kenyon Sadiq,NYJ,TE21,13,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-14,2,Matched by normalized name
+174,10,Mike Washington Jr.,LV,RB57,13,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+21,1,Matched by normalized name
+175,10,Stefon Diggs,FA,WR66,-,Coach Upside rating,Coach Bust rating,-,-41,0,Matched by normalized name
+176,10,James Conner,ARI,RB58,14,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+62,0,Matched by normalized name
+177,10,Tre' Harris,LAC,WR67,7,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-14,0,Matched by normalized name
+178,10,Emmett Johnson,KC,RB59,5,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+10,0,Matched by normalized name
+179,10,AJ Barner,SEA,TE22,11,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-5,0,Matched by normalized name
+180,10,Pittsburgh Steelers,PIT,DST6,9,Coach Upside rating–No rating available,Coach Bust rating–No rating available,5 out of 5 stars,-,1,DST team match
+181,10,Jacksonville Jaguars,JAC,DST7,7,Coach Upside rating–No rating available,Coach Bust rating–No rating available,3 out of 5 stars,-,0,DST team match
+182,10,Calvin Ridley,TEN,WR68,9,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+4,1,Matched by normalized name
+183,10,Minnesota Vikings,MIN,DST8,6,Coach Upside rating–No rating available,Coach Bust rating–No rating available,1 out of 5 stars,-,0,DST team match
+184,10,Dalton Schultz,HOU,TE23,8,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-18,0,Matched by normalized name
+185,10,New England Patriots,NE,DST9,11,Coach Upside rating–No rating available,Coach Bust rating–No rating available,3 out of 5 stars,-,1,DST team match
+186,10,Troy Franklin,DEN,WR69,10,Coach Upside rating,Coach Bust rating,2 out of 5 stars,+26,0,Not found in PDF - defaulted to 0
+187,10,Brandon Aubrey,DAL,K1,14,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-,1,Matched by normalized name
+188,10,Ka'imi Fairbairn,HOU,K2,8,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-,1,Matched by normalized name
+189,11,Los Angeles Chargers,LAC,DST10,7,Coach Upside rating–No rating available,Coach Bust rating–No rating available,3 out of 5 stars,-,0,DST team match
+190,11,Cameron Dicker,LAC,K3,7,Coach Upside rating–No rating available,Coach Bust rating–No rating available,2 out of 5 stars,-,1,Matched by normalized name
+191,11,Isaac TeSlaa,DET,WR70,6,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-24,0,Matched by normalized name
+192,11,Ryan Flournoy,DAL,WR71,14,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-32,0,Matched by normalized name
+193,11,Cam Little,JAC,K4,7,Coach Upside rating–No rating available,Coach Bust rating–No rating available,4 out of 5 stars,-,1,Matched by normalized name
+194,11,Ray Davis,BUF,RB60,7,Coach Upside rating–No rating available,Coach Bust rating–No rating available,2 out of 5 stars,-4,1,Matched by normalized name
+195,11,Kimani Vidal,LAC,RB61,7,Coach Upside rating–No rating available,Coach Bust rating–No rating available,3 out of 5 stars,+33,0,Matched by normalized name
+196,11,Jason Myers,SEA,K5,11,Coach Upside rating–No rating available,Coach Bust rating–No rating available,4 out of 5 stars,-,1,Matched by normalized name
+197,11,Green Bay Packers,GB,DST11,11,Coach Upside rating–No rating available,Coach Bust rating–No rating available,2 out of 5 stars,-,0,DST team match
+198,11,Deebo Samuel Sr.,FA,WR72,-,Coach Upside rating–No rating available,Coach Bust rating–No rating available,-,-36,0,Matched by normalized name
+199,11,Nicholas Singleton,TEN,RB62,9,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+1,0,Matched by normalized name
+200,11,Terrance Ferguson,LAR,TE24,11,Coach Upside rating–No rating available,Coach Bust rating–No rating available,4 out of 5 stars,-11,1,Matched by normalized name
+201,11,Sean Tucker,TB,RB63,10,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-22,0,Matched by normalized name
+202,11,Darnell Mooney,NYG,WR73,8,Coach Upside rating,Coach Bust rating,4 out of 5 stars,+6,0,Matched by normalized name
+203,11,Jaylin Noel,HOU,WR74,8,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+6,0,Matched by normalized name
+204,11,Baltimore Ravens,BAL,DST12,13,Coach Upside rating–No rating available,Coach Bust rating–No rating available,5 out of 5 stars,-,1,DST team match
+205,11,Eddy Pineiro,SF,K6,8,Coach Upside rating–No rating available,Coach Bust rating–No rating available,5 out of 5 stars,-,1,Matched by normalized name
+206,11,Kansas City Chiefs,KC,DST13,5,Coach Upside rating–No rating available,Coach Bust rating–No rating available,3 out of 5 stars,-,0,DST team match
+207,11,Jalen Nailor,LV,WR75,13,Coach Upside rating–No rating available,Coach Bust rating–No rating available,2 out of 5 stars,-60,0,Matched by normalized name
+208,11,Jacoby Brissett,ARI,QB27,14,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-14,0,Matched by normalized name
+209,11,Tyler Loop,BAL,K7,13,Coach Upside rating–No rating available,Coach Bust rating–No rating available,3 out of 5 stars,-,1,Matched by normalized name
+210,11,T.J. Hockenson,MIN,TE25,6,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-45,2,Matched by normalized name
+211,11,Brandon Aiyuk,SF,WR76,8,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-15,0,Matched by normalized name
+212,11,Cleveland Browns,CLE,DST14,11,Coach Upside rating–No rating available,Coach Bust rating–No rating available,5 out of 5 stars,-,1,DST team match
+213,11,Kaytron Allen,WAS,RB64,7,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-12,0,Matched by normalized name
+214,11,Jaylen Wright,MIA,RB65,6,Coach Upside rating–No rating available,Coach Bust rating–No rating available,3 out of 5 stars,+38,0,Matched by normalized name
+215,11,Evan McPherson,CIN,K8,6,Coach Upside rating–No rating available,Coach Bust rating–No rating available,2 out of 5 stars,-,0,Matched by normalized name
+216,11,Antonio Williams,WAS,WR77,7,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-45,1,Matched by normalized name
+217,11,Andy Borregales,NE,K9,11,Coach Upside rating–No rating available,Coach Bust rating–No rating available,1 out of 5 stars,-,0,Not found in PDF - defaulted to 0
+218,11,Cairo Santos,CHI,K10,10,Coach Upside rating–No rating available,Coach Bust rating–No rating available,0 out of 5 stars,-,0,Matched by normalized name
+219,11,Pat Bryant,DEN,WR78,10,Coach Upside rating–No rating available,Coach Bust rating–No rating available,2 out of 5 stars,-13,0,Not found in PDF - defaulted to 0
+220,11,Chimere Dike,TEN,WR79,9,Coach Upside rating,Coach Bust rating,3 out of 5 stars,+29,0,Not found in PDF - defaulted to 0
+221,11,Rashod Bateman,BAL,WR80,13,Coach Upside rating–No rating available,Coach Bust rating–No rating available,4 out of 5 stars,-6,0,Matched by normalized name
+222,11,Detroit Lions,DET,DST15,6,Coach Upside rating–No rating available,Coach Bust rating–No rating available,5 out of 5 stars,-,1,DST team match
+223,11,Dontayvion Wicks,PHI,WR81,10,Coach Upside rating–No rating available,Coach Bust rating–No rating available,4 out of 5 stars,-36,0,Not found in PDF - defaulted to 0
+224,11,De'Zhaun Stribling,SF,WR82,8,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-55,0,Matched by normalized name
+225,11,Elic Ayomanor,TEN,WR83,9,Coach Upside rating–No rating available,Coach Bust rating–No rating available,3 out of 5 stars,+49,0,Not found in PDF - defaulted to 0
+226,11,David Njoku,LAC,TE26,7,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-16,0,Matched by normalized name
+227,11,Jake Bates,DET,K11,6,Coach Upside rating–No rating available,Coach Bust rating–No rating available,5 out of 5 stars,-,1,Matched by normalized name
+228,11,Buffalo Bills,BUF,DST16,7,Coach Upside rating–No rating available,Coach Bust rating–No rating available,3 out of 5 stars,-,0,DST team match
+229,11,Ollie Gordon II,MIA,RB66,6,Coach Upside rating–No rating available,Coach Bust rating–No rating available,3 out of 5 stars,+35,0,Matched by normalized name
+230,11,Gunnar Helm,TEN,TE27,9,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-50,0,Matched by normalized name
+231,11,Chase McLaughlin,TB,K12,10,Coach Upside rating–No rating available,Coach Bust rating–No rating available,3 out of 5 stars,-,0,Matched by normalized name
+232,11,Tank Dell,HOU,WR84,8,Coach Upside rating–No rating available,Coach Bust rating–No rating available,3 out of 5 stars,-40,0,Matched by normalized name
+233,11,Pat Freiermuth,PIT,TE28,9,Coach Upside rating,Coach Bust rating,2 out of 5 stars,-42,0,Matched by normalized name
+234,11,Malik Washington,MIA,WR85,6,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-51,0,Matched by normalized name
+235,12,Tyreek Hill,FA,WR86,-,Coach Upside rating–No rating available,Coach Bust rating–No rating available,-,-15,0,Matched by normalized name
+236,12,MarShawn Lloyd,GB,RB67,11,Coach Upside rating–No rating available,Coach Bust rating–No rating available,4 out of 5 stars,-32,0,Matched by normalized name
+237,12,Colby Parkinson,LAR,TE29,11,Coach Upside rating–No rating available,Coach Bust rating–No rating available,4 out of 5 stars,-19,0,Not found in PDF - defaulted to 0
+238,12,Cooper Kupp,SEA,WR87,11,Coach Upside rating–No rating available,Coach Bust rating–No rating available,3 out of 5 stars,-39,0,Matched by normalized name
+239,12,Harrison Mevis,LAR,K13,11,Coach Upside rating–No rating available,Coach Bust rating–No rating available,2 out of 5 stars,-,1,Matched by normalized name
+240,12,Geno Smith,NYJ,QB28,13,Coach Upside rating–No rating available,Coach Bust rating–No rating available,4 out of 5 stars,-55,0,Matched by normalized name
+241,12,Germie Bernard,PIT,WR88,9,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-59,1,Matched by normalized name
+242,12,Cade Otton,TB,TE30,10,Coach Upside rating–No rating available,Coach Bust rating–No rating available,2 out of 5 stars,-58,0,Matched by normalized name
+243,12,Harrison Butker,KC,K14,5,Coach Upside rating–No rating available,Coach Bust rating–No rating available,5 out of 5 stars,-,1,Matched by normalized name
+244,12,Aaron Rodgers,PIT,QB29,9,Coach Upside rating–No rating available,Coach Bust rating–No rating available,2 out of 5 stars,-69,0,Matched by normalized name
+245,12,Ted Hurst III,TB,WR89,10,Coach Upside rating,Coach Bust rating,4 out of 5 stars,-48,0,Not found in PDF - defaulted to 0
+246,12,Chris Boswell,PIT,K15,9,Coach Upside rating–No rating available,Coach Bust rating–No rating available,4 out of 5 stars,-,0,Matched by normalized name
+247,12,Zachariah Branch,ATL,WR90,11,Coach Upside rating,Coach Bust rating,3 out of 5 stars,-71,0,Matched by normalized name
+248,12,Jaydon Blue,DAL,RB68,14,Coach Upside rating–No rating available,Coach Bust rating–No rating available,4 out of 5 stars,-55,0,Matched by normalized name
+249,12,Keon Coleman,BUF,WR91,7,Coach Upside rating–No rating available,Coach Bust rating–No rating available,4 out of 5 stars,-32,0,Not found in PDF - defaulted to 0
+250,12,Malik Davis,DAL,RB69,14,Coach Upside rating–No rating available,Coach Bust rating–No rating available,4 out of 5 stars,+20,0,Matched by normalized name

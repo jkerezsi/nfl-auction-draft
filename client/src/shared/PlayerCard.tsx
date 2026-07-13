@@ -1,6 +1,5 @@
 import {
-  getPositionClass,
-  getPositionLabel
+  getPositionClass
 } from "../utils/playerPosition";
 
 
@@ -8,8 +7,10 @@ interface PlayerCardProps {
   name: string;
   position: string;
   nflTeam?: string;
+  byeWeek?: number;
   rank?: number;
-  price?: number;
+  auctionValue?: number;
+  salePrice?: number;
   compact?: boolean;
   result?: "won" | "lost";
 }
@@ -19,8 +20,10 @@ export default function PlayerCard({
   name,
   position,
   nflTeam,
+  byeWeek,
   rank,
-  price,
+  auctionValue,
+  salePrice,
   compact = false,
   result
 }: PlayerCardProps) {
@@ -30,12 +33,6 @@ export default function PlayerCard({
 
   const positionClass =
     getPositionClass(
-      resolvedPosition
-    );
-
-
-  const positionLabel =
-    getPositionLabel(
       resolvedPosition
     );
 
@@ -66,18 +63,18 @@ export default function PlayerCard({
       <div className="fantasy-player-card__content">
         <div className="fantasy-player-card__top">
           <span className="fantasy-player-card__position">
-            {positionLabel}
+            {resolvedPosition}
           </span>
 
           {
-            price !== undefined && (
+            salePrice !== undefined && (
               <span
                 className="fantasy-player-card__price"
                 style={{
                   color: "#111827"
                 }}
               >
-                ${price}
+                Won ${salePrice}
               </span>
             )
           }
@@ -92,35 +89,96 @@ export default function PlayerCard({
           {name}
         </div>
 
-        {
-          (
-            nflTeam !== undefined ||
-            rank !== undefined
-          ) && (
-            <div
-              className="fantasy-player-card__details"
-              style={{
-                color: "#64748b"
-              }}
-            >
-              {
-                nflTeam !== undefined && (
-                  <span>
-                    {nflTeam}
-                  </span>
-                )
-              }
 
-              {
-                rank !== undefined && (
-                  <span>
-                    Rank #{rank}
-                  </span>
-                )
-              }
-            </div>
+        {
+  (
+    nflTeam !== undefined ||
+    byeWeek !== undefined ||
+    auctionValue !== undefined ||
+    rank !== undefined
+  ) && (
+    <div
+      className="fantasy-player-card__details"
+      style={{
+        color: "#64748b",
+        display: "flex",
+        alignItems: "center",
+        gap: "18px",
+        flexWrap: "wrap",
+        marginTop: compact
+          ? "6px"
+          : "10px",
+        fontWeight: 600
+      }}
+    >
+      {
+        nflTeam !== undefined && (
+          <span>
+            {nflTeam}
+          </span>
+        )
+      }
+
+      {
+        (
+          nflTeam !== undefined &&
+          (
+            byeWeek !== undefined ||
+            auctionValue !== undefined ||
+            rank !== undefined
           )
-        }
+        ) && (
+          <span>•</span>
+        )
+      }
+
+      {
+        byeWeek !== undefined && (
+          <span>
+            Bye {byeWeek}
+          </span>
+        )
+      }
+
+      {
+        (
+          byeWeek !== undefined &&
+          (
+            auctionValue !== undefined ||
+            rank !== undefined
+          )
+        ) && (
+          <span>•</span>
+        )
+      }
+
+      {
+        auctionValue !== undefined && (
+          <span>
+            AAV: ${auctionValue}
+          </span>
+        )
+      }
+
+      {
+        (
+          auctionValue !== undefined &&
+          rank !== undefined
+        ) && (
+          <span>•</span>
+        )
+      }
+
+      {
+        rank !== undefined && (
+          <span>
+            Rank #{rank}
+          </span>
+        )
+      }
+    </div>
+  )
+}
       </div>
     </article>
   );

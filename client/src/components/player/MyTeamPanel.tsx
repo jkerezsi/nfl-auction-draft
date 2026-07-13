@@ -154,21 +154,15 @@ export default function MyTeamPanel({
             {
               roster.players.map(
                 player => (
-                  <PlayerCard
-                    key={
-                      `${player.playerId}-${player.id}`
-                    }
-                    name={
-                      player.playerName
-                    }
-                    position={
-                      player.position
-                    }
-                    price={
-                      player.price
-                    }
-                    compact
-                  />
+                <PlayerCard
+                  name={player.name}
+                  position={player.position}
+                  nflTeam={player.nfl_team}
+                  byeWeek={player.bye_week}
+                  rank={player.rank}
+                  auctionValue={player.auction_value}
+                  compact
+                />
                 )
               )
             }

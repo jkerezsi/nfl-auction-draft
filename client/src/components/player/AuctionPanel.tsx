@@ -94,17 +94,15 @@ export default function AuctionPanel({
           </div>
 
           <PlayerCard
-            name={
-              currentPlayer.name
-            }
-            position={
-              currentPlayer.position
-            }
-            nflTeam={
-              currentPlayer.nfl_team
-            }
-            rank={
-              currentPlayer.rank
+            name={currentPlayer.name}
+            position={currentPlayer.position}
+            nflTeam={currentPlayer.nfl_team}
+            byeWeek={currentPlayer.bye_week}
+            rank={currentPlayer.rank}
+            auctionValue={currentPlayer.auction_value}
+            salePrice={
+              game.lastWinnerPrice ??
+              undefined
             }
           />
         </section>
@@ -134,23 +132,16 @@ export default function AuctionPanel({
           </div>
 
           <PlayerCard
-            name={
-              currentPlayer.name
-            }
-            position={
-              currentPlayer.position
-            }
-            nflTeam={
-              currentPlayer.nfl_team
-            }
-            rank={
-              currentPlayer.rank
-            }
-            price={
+            name={currentPlayer.name}
+            position={currentPlayer.position}
+            nflTeam={currentPlayer.nfl_team}
+            byeWeek={currentPlayer.bye_week}
+            rank={currentPlayer.rank}
+            auctionValue={currentPlayer.auction_value}
+            salePrice={
               game.lastWinnerPrice ??
               undefined
             }
-            result="won"
           />
         </section>
       );
@@ -176,23 +167,16 @@ export default function AuctionPanel({
         </div>
 
         <PlayerCard
-          name={
-            currentPlayer.name
-          }
-          position={
-            currentPlayer.position
-          }
-          nflTeam={
-            currentPlayer.nfl_team
-          }
-          rank={
-            currentPlayer.rank
-          }
-          price={
+          name={currentPlayer.name}
+          position={currentPlayer.position}
+          nflTeam={currentPlayer.nfl_team}
+          byeWeek={currentPlayer.bye_week}
+          rank={currentPlayer.rank}
+          auctionValue={currentPlayer.auction_value}
+          salePrice={
             game.lastWinnerPrice ??
             undefined
           }
-          result="lost"
         />
       </section>
     );
@@ -202,17 +186,15 @@ export default function AuctionPanel({
   return (
     <section className="player-card auction-panel">
       <PlayerCard
-        name={
-          currentPlayer.name
-        }
-        position={
-          currentPlayer.position
-        }
-        nflTeam={
-          currentPlayer.nfl_team
-        }
-        rank={
-          currentPlayer.rank
+        name={currentPlayer.name}
+        position={currentPlayer.position}
+        nflTeam={currentPlayer.nfl_team}
+        byeWeek={currentPlayer.bye_week}
+        rank={currentPlayer.rank}
+        auctionValue={currentPlayer.auction_value}
+        salePrice={
+          game.lastWinnerPrice ??
+          undefined
         }
       />
 

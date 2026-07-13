@@ -1,42 +1,40 @@
-import { db } from "../database/connection";
+import {
+  db
+} from "../database/connection";
+
+
+export interface Player {
+  id: number;
+  rank: number;
+  name: string;
+  position: string;
+  nfl_team: string;
+  bye_week: number;
+  drafted: number;
+  auction_value: number;
+}
 
 
 export class PlayerService {
-
-
-  getAllPlayers() {
-
-
+  getAllPlayers(): Player[] {
     return db
-      .prepare(`
-
+      .prepare(
+        `
         SELECT
-
           id,
-
           rank,
-
           name,
-
           position,
-
           nfl_team,
-
           bye_week,
-
-          drafted
-
+          drafted,
+          auction_value
         FROM draft_players
-
         ORDER BY rank
-
-      `)
-      .all();
-
-
+        `
+      )
+      .all() as Player[];
   }
-
-
 }
 
 

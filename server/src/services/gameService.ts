@@ -11,6 +11,7 @@ export interface CurrentPlayer {
   nfl_team: string;
   bye_week: number;
   drafted: number;
+  auction_value: number;
 }
 
 
@@ -83,22 +84,23 @@ export function getGameState(): GameState {
   if (
     game.currentPlayerId !== null
   ) {
-    currentPlayer =
-      db
-        .prepare(
-          `
-          SELECT
-            id,
-            rank,
-            name,
-            position,
-            nfl_team,
-            bye_week,
-            drafted
-          FROM draft_players
-          WHERE id = ?
-          `
-        )
+      currentPlayer =
+        db
+          .prepare(
+            `
+            SELECT
+              id,
+              rank,
+              name,
+              position,
+              nfl_team,
+              bye_week,
+              drafted,
+              auction_value
+            FROM draft_players
+            WHERE id = ?
+            `
+          )
         .get(
           game.currentPlayerId
         ) as CurrentPlayer | undefined ??

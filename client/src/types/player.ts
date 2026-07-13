@@ -6,4 +6,5 @@ export interface Player {
   nfl_team: string;
   bye_week: number;
   drafted: number;
+  auction_value: number;
 }

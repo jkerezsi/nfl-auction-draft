@@ -648,20 +648,18 @@ export default function AdminPage() {
                   textAlign: "left"
                 }}
               >
-                <PlayerCard
-                  name={
-                    currentPlayer.name
-                  }
-                  position={
-                    currentPlayer.position
-                  }
-                  nflTeam={
-                    currentPlayer.nfl_team
-                  }
-                  rank={
-                    currentPlayer.rank
-                  }
-                />
+              <PlayerCard
+                name={currentPlayer.name}
+                position={currentPlayer.position}
+                nflTeam={currentPlayer.nfl_team}
+                byeWeek={currentPlayer.bye_week}
+                rank={currentPlayer.rank}
+                auctionValue={currentPlayer.auction_value}
+                salePrice={
+                  game.lastWinnerPrice ??
+                  undefined
+                }
+              />
               </div>
 
               <div
@@ -722,24 +720,18 @@ export default function AdminPage() {
                   textAlign: "left"
                 }}
               >
-                <PlayerCard
-                  name={
-                    currentPlayer.name
-                  }
-                  position={
-                    currentPlayer.position
-                  }
-                  nflTeam={
-                    currentPlayer.nfl_team
-                  }
-                  rank={
-                    currentPlayer.rank
-                  }
-                  price={
-                    game.lastWinnerPrice ??
-                    undefined
-                  }
-                />
+              <PlayerCard
+                name={currentPlayer.name}
+                position={currentPlayer.position}
+                nflTeam={currentPlayer.nfl_team}
+                byeWeek={currentPlayer.bye_week}
+                rank={currentPlayer.rank}
+                auctionValue={currentPlayer.auction_value}
+                salePrice={
+                  game.lastWinnerPrice ??
+                  undefined
+                }
+              />
               </div>
 
               {
@@ -1075,21 +1067,15 @@ export default function AdminPage() {
                           "1px solid #374151"
                       }}
                     >
-                      <PlayerCard
-                        name={
-                          player.name
-                        }
-                        position={
-                          player.position
-                        }
-                        nflTeam={
-                          player.nfl_team
-                        }
-                        rank={
-                          player.rank
-                        }
-                        compact
-                      />
+                    <PlayerCard
+                      name={player.name}
+                      position={player.position}
+                      nflTeam={player.nfl_team}
+                      byeWeek={player.bye_week}
+                      rank={player.rank}
+                      auctionValue={player.auction_value}
+                      compact
+                    />
 
                       <button
                         type="button"
