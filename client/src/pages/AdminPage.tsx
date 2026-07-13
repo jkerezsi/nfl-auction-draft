@@ -17,7 +17,8 @@ import PlayerCard from "../shared/PlayerCard";
 
 import {
   getGameState,
-  nominatePlayer
+  nominatePlayer,
+  resetDraft
 } from "../services/gameService";
 
 import {
@@ -99,6 +100,16 @@ export default function AdminPage() {
     "ALL"
   );
 
+  const [
+    confirmReset,
+    setConfirmReset
+  ] = useState(false);
+
+  const [
+    isResetting,
+    setIsResetting
+  ] = useState(false);
+
 
   useEffect(
     () => {
@@ -125,6 +136,14 @@ export default function AdminPage() {
           void loadPlayers();
         } else {
           setResults([]);
+        }
+
+
+        if (
+          updatedGame.status === "SETUP"
+        ) {
+          void loadTeams();
+          void loadPlayers();
         }
       }
 
@@ -162,9 +181,17 @@ export default function AdminPage() {
       ]);
 
 
-      setTeams(teamData);
-      setPlayers(playerData);
-      setGame(gameData);
+      setTeams(
+        teamData
+      );
+
+      setPlayers(
+        playerData
+      );
+
+      setGame(
+        gameData
+      );
 
 
       if (
@@ -187,7 +214,10 @@ export default function AdminPage() {
     const data =
       await getTeams();
 
-    setTeams(data);
+
+    setTeams(
+      data
+    );
   }
 
 
@@ -195,7 +225,10 @@ export default function AdminPage() {
     const data =
       await getPlayers();
 
-    setPlayers(data);
+
+    setPlayers(
+      data
+    );
   }
 
 
@@ -209,7 +242,9 @@ export default function AdminPage() {
         );
 
 
-      setResults(data);
+      setResults(
+        data
+      );
     } catch {
       setResults([]);
     }
@@ -253,6 +288,7 @@ export default function AdminPage() {
     try {
       setError("");
       setResults([]);
+      setConfirmReset(false);
 
 
       const updatedGame =
@@ -273,6 +309,58 @@ export default function AdminPage() {
   }
 
 
+  async function handleResetDraft() {
+    if (!confirmReset) {
+      setConfirmReset(true);
+
+      return;
+    }
+
+
+    try {
+      setError("");
+      setIsResetting(true);
+
+
+      const updatedGame =
+        await resetDraft();
+
+
+      const [
+        teamData,
+        playerData
+      ] = await Promise.all([
+        getTeams(),
+        getPlayers()
+      ]);
+
+
+      setGame(
+        updatedGame
+      );
+
+      setTeams(
+        teamData
+      );
+
+      setPlayers(
+        playerData
+      );
+
+      setResults([]);
+      setSelectedPosition("ALL");
+      setConfirmReset(false);
+    } catch (requestError: any) {
+      setError(
+        requestError.response?.data?.error ??
+        "Could not reset the draft."
+      );
+    } finally {
+      setIsResetting(false);
+    }
+  }
+
+
   function getTeamName(
     teamId: number
   ) {
@@ -286,38 +374,46 @@ export default function AdminPage() {
   }
 
 
- function normalizePosition(
-  position: string
-): PositionFilter | string {
-  const normalized =
-    position
-      .trim()
-      .toUpperCase();
+  function normalizePosition(
+    position: string
+  ): PositionFilter | string {
+    const normalized =
+      position
+        .trim()
+        .toUpperCase();
 
-  const positionMap: Record<
-    string,
-    PositionFilter
-  > = {
-    QB: "QB",
-    RB: "RB",
-    WR: "WR",
-    TE: "TE",
-    K: "K",
-    DST: "DST",
-    DEF: "DST"
-  };
 
-  const key =
-    normalized.replace(
-      /\d+$/,
-      ""
+    const positionMap: Record<
+      string,
+      PositionFilter
+    > = {
+      QB: "QB",
+      RB: "RB",
+      WR: "WR",
+      TE: "TE",
+      K: "K",
+      DST: "DST",
+      DEF: "DST"
+    };
+
+
+    const key =
+      normalized
+        .replace(
+          /\s+/g,
+          ""
+        )
+        .replace(
+          /\d+$/,
+          ""
+        );
+
+
+    return (
+      positionMap[key] ??
+      key
     );
-
-  return (
-    positionMap[key] ??
-    key
-  );
-}
+  }
 
 
   const filteredPlayers =
@@ -358,6 +454,7 @@ export default function AdminPage() {
           justifyContent:
             "space-between",
           alignItems: "center",
+          flexWrap: "wrap",
           gap: "20px",
           marginBottom: "24px"
         }}
@@ -382,14 +479,114 @@ export default function AdminPage() {
           </p>
         </div>
 
+
         <div
           style={{
-            fontSize: "20px"
+            display: "flex",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "16px"
           }}
         >
-          Teams: {teams.length}
+          <div
+            style={{
+              fontSize: "20px"
+            }}
+          >
+            Teams: {teams.length}
+          </div>
+
+
+          {
+            confirmReset && (
+              <button
+                type="button"
+                onClick={
+                  () =>
+                    setConfirmReset(
+                      false
+                    )
+                }
+                disabled={
+                  isResetting
+                }
+                style={{
+                  padding: "10px 16px",
+                  border: "1px solid #6b7280",
+                  borderRadius: "8px",
+                  background: "#374151",
+                  color: "white",
+                  cursor: "pointer"
+                }}
+              >
+                Cancel
+              </button>
+            )
+          }
+
+
+          <button
+            type="button"
+            onClick={
+              () =>
+                void handleResetDraft()
+            }
+            disabled={
+              isResetting
+            }
+            style={{
+              padding: "10px 16px",
+              border:
+                confirmReset
+                  ? "1px solid #f87171"
+                  : "1px solid #6b7280",
+              borderRadius: "8px",
+              background:
+                confirmReset
+                  ? "#b91c1c"
+                  : "#374151",
+              color: "white",
+              fontWeight: 700,
+              cursor:
+                isResetting
+                  ? "not-allowed"
+                  : "pointer",
+              opacity:
+                isResetting
+                  ? 0.65
+                  : 1
+            }}
+          >
+            {
+              isResetting
+                ? "Resetting..."
+                : confirmReset
+                  ? "Confirm Reset"
+                  : "Reset Draft"
+            }
+          </button>
         </div>
       </header>
+
+
+      {
+        confirmReset && (
+          <div
+            style={{
+              padding: "14px",
+              marginBottom: "20px",
+              background: "#7f1d1d",
+              border: "1px solid #ef4444",
+              borderRadius: "10px"
+            }}
+          >
+            This will erase all bids and rosters,
+            restore every team budget, and mark every
+            player as undrafted. Click Confirm Reset
+            to continue.
+          </div>
+        )
+      }
 
 
       {
@@ -692,7 +889,8 @@ export default function AdminPage() {
             <button
               type="button"
               onClick={
-                addTeam
+                () =>
+                  void addTeam()
               }
               style={{
                 padding:
@@ -901,7 +1099,7 @@ export default function AdminPage() {
                         }
                         onClick={
                           () =>
-                            startAuction(
+                            void startAuction(
                               player.id
                             )
                         }

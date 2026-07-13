@@ -1,13 +1,21 @@
-import { Router } from "express";
+import {
+  Router
+} from "express";
 
 import {
   getGameState,
-  nominatePlayer
+  nominatePlayer,
+  resetDraft
 } from "../services/gameService";
 
 import {
-  startAuctionTimer
+  startAuctionTimer,
+  stopAuctionTimer
 } from "../services/auctionTimerService";
+
+import {
+  broadcastGameUpdated
+} from "../socket/socket";
 
 
 const router =
@@ -16,16 +24,22 @@ const router =
 
 router.get(
   "/",
-  (_req: any, res: any) => {
+  (
+    _req: any,
+    res: any
+  ) => {
     try {
       res.json(
         getGameState()
       );
-    } catch (error: any) {
+    } catch (
+      error: any
+    ) {
       res
         .status(400)
         .json({
-          error: error.message
+          error:
+            error.message
         });
     }
   }
@@ -34,7 +48,10 @@ router.get(
 
 router.post(
   "/nominate/:playerId",
-  (req: any, res: any) => {
+  (
+    req: any,
+    res: any
+  ) => {
     try {
       const playerId =
         Number(
@@ -43,7 +60,9 @@ router.post(
 
 
       const game =
-        nominatePlayer(playerId);
+        nominatePlayer(
+          playerId
+        );
 
 
       startAuctionTimer(
@@ -55,11 +74,50 @@ router.post(
       res.json(
         getGameState()
       );
-    } catch (error: any) {
+    } catch (
+      error: any
+    ) {
       res
         .status(400)
         .json({
-          error: error.message
+          error:
+            error.message
+        });
+    }
+  }
+);
+
+
+router.post(
+  "/reset",
+  (
+    _req: any,
+    res: any
+  ) => {
+    try {
+      stopAuctionTimer();
+
+
+      const game =
+        resetDraft();
+
+
+      broadcastGameUpdated(
+        game
+      );
+
+
+      res.json(
+        game
+      );
+    } catch (
+      error: any
+    ) {
+      res
+        .status(400)
+        .json({
+          error:
+            error.message
         });
     }
   }

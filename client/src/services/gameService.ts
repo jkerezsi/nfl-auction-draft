@@ -28,3 +28,15 @@ export async function nominatePlayer(
 
   return response.data;
 }
+
+
+export async function resetDraft():
+Promise<GameState> {
+  const response =
+    await api.post<GameState>(
+      "/game/reset"
+    );
+
+
+  return response.data;
+}
