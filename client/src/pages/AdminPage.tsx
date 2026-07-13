@@ -36,7 +36,7 @@ import type {
 
 import type {
   AuctionBid
-} from "../types/bit";
+} from "../types/bid";
 
 
 interface GameState {
@@ -54,6 +54,21 @@ interface GameState {
 
   currentPlayer: Player | null;
 }
+
+
+const POSITION_FILTERS = [
+  "ALL",
+  "QB",
+  "RB",
+  "WR",
+  "TE",
+  "K",
+  "DST"
+] as const;
+
+
+type PositionFilter =
+  typeof POSITION_FILTERS[number];
 
 
 export default function AdminPage() {
@@ -76,6 +91,13 @@ export default function AdminPage() {
 
   const [error, setError] =
     useState("");
+
+  const [
+    selectedPosition,
+    setSelectedPosition
+  ] = useState<PositionFilter>(
+    "ALL"
+  );
 
 
   useEffect(
@@ -264,6 +286,51 @@ export default function AdminPage() {
   }
 
 
+ function normalizePosition(
+  position: string
+): PositionFilter | string {
+  const normalized =
+    position
+      .trim()
+      .toUpperCase();
+
+  const positionMap: Record<
+    string,
+    PositionFilter
+  > = {
+    QB: "QB",
+    RB: "RB",
+    WR: "WR",
+    TE: "TE",
+    K: "K",
+    DST: "DST",
+    DEF: "DST"
+  };
+
+  const key =
+    normalized.replace(
+      /\d+$/,
+      ""
+    );
+
+  return (
+    positionMap[key] ??
+    key
+  );
+}
+
+
+  const filteredPlayers =
+    selectedPosition === "ALL"
+      ? players
+      : players.filter(
+          player =>
+            normalizePosition(
+              player.position
+            ) === selectedPosition
+        );
+
+
   const currentPlayer =
     game?.currentPlayer ?? null;
 
@@ -324,6 +391,7 @@ export default function AdminPage() {
         </div>
       </header>
 
+
       {
         error && (
           <div
@@ -338,6 +406,7 @@ export default function AdminPage() {
           </div>
         )
       }
+
 
       <section
         style={{
@@ -383,11 +452,19 @@ export default function AdminPage() {
                 }}
               >
                 <PlayerCard
-                  name={currentPlayer.name}
-                  position={currentPlayer.position}
-                  nflTeam={currentPlayer.nfl_team}
-                  rank={currentPlayer.rank}
-/>
+                  name={
+                    currentPlayer.name
+                  }
+                  position={
+                    currentPlayer.position
+                  }
+                  nflTeam={
+                    currentPlayer.nfl_team
+                  }
+                  rank={
+                    currentPlayer.rank
+                  }
+                />
               </div>
 
               <div
@@ -401,7 +478,9 @@ export default function AdminPage() {
                 }}
               >
                 <Countdown
-                  seconds={game.countdown}
+                  seconds={
+                    game.countdown
+                  }
                 />
 
                 <div>
@@ -447,15 +526,23 @@ export default function AdminPage() {
                 }}
               >
                 <PlayerCard
-                  name={currentPlayer.name}
-                  position={currentPlayer.position}
-                  nflTeam={currentPlayer.nfl_team}
-                  rank={currentPlayer.rank}
+                  name={
+                    currentPlayer.name
+                  }
+                  position={
+                    currentPlayer.position
+                  }
+                  nflTeam={
+                    currentPlayer.nfl_team
+                  }
+                  rank={
+                    currentPlayer.rank
+                  }
                   price={
                     game.lastWinnerPrice ??
                     undefined
                   }
-/>
+                />
               </div>
 
               {
@@ -483,7 +570,9 @@ export default function AdminPage() {
                           index
                         ) => (
                           <div
-                            key={bid.id}
+                            key={
+                              bid.id
+                            }
                             style={{
                               display: "grid",
                               gridTemplateColumns:
@@ -524,9 +613,11 @@ export default function AdminPage() {
                                   "left"
                               }}
                             >
-                              {getTeamName(
-                                bid.team_id
-                              )}
+                              {
+                                getTeamName(
+                                  bid.team_id
+                                )
+                              }
                             </span>
 
                             <span
@@ -552,6 +643,7 @@ export default function AdminPage() {
           )
         }
       </section>
+
 
       <div
         style={{
@@ -581,7 +673,9 @@ export default function AdminPage() {
             }}
           >
             <input
-              value={name}
+              value={
+                name
+              }
               onChange={
                 event =>
                   setName(
@@ -596,7 +690,10 @@ export default function AdminPage() {
             />
 
             <button
-              onClick={addTeam}
+              type="button"
+              onClick={
+                addTeam
+              }
               style={{
                 padding:
                   "12px 16px"
@@ -610,7 +707,9 @@ export default function AdminPage() {
             teams.map(
               team => (
                 <div
-                  key={team.id}
+                  key={
+                    team.id
+                  }
                   style={{
                     display: "flex",
                     justifyContent:
@@ -633,6 +732,7 @@ export default function AdminPage() {
           }
         </section>
 
+
         <section
           style={{
             padding: "20px",
@@ -640,9 +740,100 @@ export default function AdminPage() {
             borderRadius: "16px"
           }}
         >
-          <h2>
-            Player Pool
-          </h2>
+          <div
+            style={{
+              display: "flex",
+              justifyContent:
+                "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: "12px",
+              marginBottom: "18px"
+            }}
+          >
+            <h2
+              style={{
+                margin: 0
+              }}
+            >
+              Player Pool
+            </h2>
+
+            <span
+              style={{
+                opacity: 0.7
+              }}
+            >
+              {filteredPlayers.length}
+              {" "}
+              {
+                filteredPlayers.length === 1
+                  ? "player"
+                  : "players"
+              }
+            </span>
+          </div>
+
+
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "8px",
+              marginBottom: "18px"
+            }}
+          >
+            {
+              POSITION_FILTERS.map(
+                position => {
+                  const isSelected =
+                    selectedPosition ===
+                    position;
+
+
+                  return (
+                    <button
+                      key={
+                        position
+                      }
+                      type="button"
+                      aria-pressed={
+                        isSelected
+                      }
+                      onClick={
+                        () =>
+                          setSelectedPosition(
+                            position
+                          )
+                      }
+                      style={{
+                        minWidth: "52px",
+                        padding: "9px 14px",
+                        border:
+                          isSelected
+                            ? "1px solid #60a5fa"
+                            : "1px solid #4b5563",
+                        borderRadius: "999px",
+                        background:
+                          isSelected
+                            ? "#2563eb"
+                            : "#374151",
+                        color: "white",
+                        fontWeight:
+                          isSelected
+                            ? 700
+                            : 500,
+                        cursor: "pointer"
+                      }}
+                    >
+                      {position}
+                    </button>
+                  );
+                }
+              )
+            }
+          </div>
+
 
           <div
             style={{
@@ -651,56 +842,81 @@ export default function AdminPage() {
             }}
           >
             {
-              players.map(
-                player => (
-                  <div
-                    key={player.id}
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns:
-                        "1fr 130px",
-                      alignItems:
-                        "center",
-                      gap: "12px",
-                      padding: "10px",
-                      opacity:
-                        player.drafted === 1
-                          ? 0.35
-                          : 1,
-                      borderBottom:
-                        "1px solid #374151"
-                    }}
-                  >
-                    <PlayerCard
-                      name={player.name}
-                      position={player.position}
-                      nflTeam={player.nfl_team}
-                      rank={player.rank}
-                      compact
-                    />
-
-                    <button
-                      disabled={
-                        player.drafted === 1 ||
-                        isAuctionActive
-                      }
-                      onClick={
-                        () =>
-                          startAuction(
-                            player.id
-                          )
+              filteredPlayers.length === 0 ? (
+                <div
+                  style={{
+                    padding: "32px 16px",
+                    textAlign: "center",
+                    opacity: 0.7
+                  }}
+                >
+                  No players found for
+                  {" "}
+                  {selectedPosition}.
+                </div>
+              ) : (
+                filteredPlayers.map(
+                  player => (
+                    <div
+                      key={
+                        player.id
                       }
                       style={{
-                        padding: "10px"
+                        display: "grid",
+                        gridTemplateColumns:
+                          "1fr 130px",
+                        alignItems:
+                          "center",
+                        gap: "12px",
+                        padding: "10px",
+                        opacity:
+                          player.drafted === 1
+                            ? 0.35
+                            : 1,
+                        borderBottom:
+                          "1px solid #374151"
                       }}
                     >
-                      {
-                        player.drafted === 1
-                          ? "Drafted"
-                          : "Nominate"
-                      }
-                    </button>
-                  </div>
+                      <PlayerCard
+                        name={
+                          player.name
+                        }
+                        position={
+                          player.position
+                        }
+                        nflTeam={
+                          player.nfl_team
+                        }
+                        rank={
+                          player.rank
+                        }
+                        compact
+                      />
+
+                      <button
+                        type="button"
+                        disabled={
+                          player.drafted === 1 ||
+                          isAuctionActive
+                        }
+                        onClick={
+                          () =>
+                            startAuction(
+                              player.id
+                            )
+                        }
+                        style={{
+                          padding: "10px"
+                        }}
+                      >
+                        {
+                          player.drafted === 1
+                            ? "Drafted"
+                            : "Nominate"
+                        }
+                      </button>
+                    </div>
+                  )
                 )
               )
             }
