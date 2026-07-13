@@ -1,4 +1,4 @@
-import PlayerCard from "../../shared/playerCard";
+import PlayerCard from "../../shared/PlayerCard";
 
 import type {
   TeamRoster

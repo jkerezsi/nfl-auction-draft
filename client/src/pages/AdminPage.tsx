@@ -12,8 +12,9 @@ import {
   getPlayers
 } from "../services/playerService";
 
-
 import Countdown from "../components/player/Countdown";
+import PlayerCard from "../shared/PlayerCard";
+
 import {
   getGameState,
   nominatePlayer
@@ -35,7 +36,7 @@ import type {
 
 import type {
   AuctionBid
-} from "../services/bidService";
+} from "../types/bit";
 
 
 interface GameState {
@@ -374,25 +375,20 @@ export default function AdminPage() {
                 CURRENT AUCTION
               </p>
 
-              <h2
+              <div
                 style={{
-                  margin:
-                    "18px 0 4px",
-                  fontSize: "52px"
+                  maxWidth: "600px",
+                  margin: "18px auto 0",
+                  textAlign: "left"
                 }}
               >
-                {currentPlayer.name}
-              </h2>
-
-              <p
-                style={{
-                  fontSize: "24px"
-                }}
-              >
-                {currentPlayer.position}
-                {" · "}
-                {currentPlayer.nfl_team}
-              </p>
+                <PlayerCard
+                  name={currentPlayer.name}
+                  position={currentPlayer.position}
+                  nflTeam={currentPlayer.nfl_team}
+                  rank={currentPlayer.rank}
+/>
+              </div>
 
               <div
                 style={{
@@ -404,9 +400,9 @@ export default function AdminPage() {
                   marginTop: "34px"
                 }}
               >
-              <Countdown
-                seconds={game.countdown}
-              />
+                <Countdown
+                  seconds={game.countdown}
+                />
 
                 <div>
                   <div
@@ -443,25 +439,24 @@ export default function AdminPage() {
                 AUCTION RESULTS
               </p>
 
-              <h2
+              <div
                 style={{
-                  margin:
-                    "18px 0 4px",
-                  fontSize: "46px"
+                  maxWidth: "600px",
+                  margin: "18px auto 0",
+                  textAlign: "left"
                 }}
               >
-                {currentPlayer.name}
-              </h2>
-
-              <p
-                style={{
-                  fontSize: "22px"
-                }}
-              >
-                {currentPlayer.position}
-                {" · "}
-                {currentPlayer.nfl_team}
-              </p>
+                <PlayerCard
+                  name={currentPlayer.name}
+                  position={currentPlayer.position}
+                  nflTeam={currentPlayer.nfl_team}
+                  rank={currentPlayer.rank}
+                  price={
+                    game.lastWinnerPrice ??
+                    undefined
+                  }
+/>
+              </div>
 
               {
                 results.length === 0 ? (
@@ -663,7 +658,7 @@ export default function AdminPage() {
                     style={{
                       display: "grid",
                       gridTemplateColumns:
-                        "70px 1fr 100px 130px",
+                        "1fr 130px",
                       alignItems:
                         "center",
                       gap: "12px",
@@ -676,17 +671,13 @@ export default function AdminPage() {
                         "1px solid #374151"
                     }}
                   >
-                    <span>
-                      #{player.rank}
-                    </span>
-
-                    <span>
-                      {player.name}
-                    </span>
-
-                    <span>
-                      {player.position}
-                    </span>
+                    <PlayerCard
+                      name={player.name}
+                      position={player.position}
+                      nflTeam={player.nfl_team}
+                      rank={player.rank}
+                      compact
+                    />
 
                     <button
                       disabled={

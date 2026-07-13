@@ -24,14 +24,19 @@ export default function PlayerCard({
   compact = false,
   result
 }: PlayerCardProps) {
+  const resolvedPosition =
+    position || "UNKNOWN";
+
+
   const positionClass =
     getPositionClass(
-      position
+      resolvedPosition
     );
+
 
   const positionLabel =
     getPositionLabel(
-      position
+      resolvedPosition
     );
 
 
@@ -51,9 +56,10 @@ export default function PlayerCard({
 
   return (
     <article
-      className={
-        classNames
-      }
+      className={classNames}
+      style={{
+        color: "#111827"
+      }}
     >
       <div className="fantasy-player-card__accent" />
 
@@ -65,14 +71,24 @@ export default function PlayerCard({
 
           {
             price !== undefined && (
-              <span className="fantasy-player-card__price">
+              <span
+                className="fantasy-player-card__price"
+                style={{
+                  color: "#111827"
+                }}
+              >
                 ${price}
               </span>
             )
           }
         </div>
 
-        <div className="fantasy-player-card__name">
+        <div
+          className="fantasy-player-card__name"
+          style={{
+            color: "#111827"
+          }}
+        >
           {name}
         </div>
 
@@ -81,7 +97,12 @@ export default function PlayerCard({
             nflTeam !== undefined ||
             rank !== undefined
           ) && (
-            <div className="fantasy-player-card__details">
+            <div
+              className="fantasy-player-card__details"
+              style={{
+                color: "#64748b"
+              }}
+            >
               {
                 nflTeam !== undefined && (
                   <span>
