@@ -1,95 +1,58 @@
 # Fantasy Auction Draft
 
-## Current Sprint
+## Current Status
 
-### Sprint 1 — Frontend Architecture Refactor
+### Sprint 2 — Mobile UX & Shared UI
 
-#### Status
+#### Completed
 
 - ✅ Shared frontend types
-- ✅ TeamSelector component
-- ✅ Countdown component
-- ✅ AuctionPanel component
-- ⏳ MyTeamPanel component
-- ⏳ useAuction hook
-- ⏳ PlayerPage cleanup
+- ✅ TeamSelector
+- ✅ Countdown
+- ✅ AuctionPanel
+- ✅ MyTeamPanel
+- ✅ useAuction hook
+- ✅ PlayerPage refactor
+- ✅ Shared PlayerCard
+- ✅ Shared TeamCard
+- ✅ Position color system
+- ✅ Mobile-first Player page
+- ✅ Automatic roster refresh
+- ✅ Automatic budget refresh
 
 ---
 
-### Current Goal
+## Current Goal
 
-Complete the frontend refactor **without changing application behavior**.
+Finish the shared UI system and polish the mobile/player experience before moving on to commissioner features.
 
 After this sprint:
 
-- PlayerPage is only responsible for orchestration.
-- Business logic lives in `useAuction`.
-- UI is split into reusable components.
-- No `any` types on the frontend.
+- AdminPage uses PlayerCard.
+- TeamSelector uses TeamCard.
+- Position colors are consistent throughout the application.
+- Mobile UX is optimized.
+- Shared components are reused across pages.
 
 ---
 
-### Current Blocker
+## Next Tasks
 
-MyTeamPanel currently displays **"Loading..."** after winning an auction.
-
-Possible causes:
-
-- roster never loads
-- roster request fails
-- PlayerPage does not refresh roster after auction completion
-
-Next step:
-
-- Inspect roster loading inside PlayerPage.
-
----
-
-### Last Completed Milestone
-
-AuctionPanel extracted successfully.
-
-Completed:
-
-- Team selection
-- Countdown
-- Auction UI
-
-No behavior changes.
-
----
-
-### Next Tasks
-
-1. Fix roster loading.
-2. Finish MyTeamPanel.
-3. Create `useAuction`.
-4. Simplify PlayerPage.
-5. Test the complete player flow.
-
----
-
-### Definition of Done
-
-- Team selection works.
-- Auction works.
-- Countdown works.
-- Bid submission works.
-- My Team refreshes automatically.
-- PlayerPage is mostly orchestration.
+1. Apply PlayerCard to AdminPage.
+2. Apply TeamCard to TeamSelector.
+3. Mobile responsiveness testing.
+4. Projector layout testing.
+5. UI polish.
 
 ---
 
 # Project Overview
 
-Fantasy football auction draft application where:
+Fantasy football auction draft application designed specifically for **live draft night**.
 
-- Commissioner controls the draft.
-- Players bid privately on their phones.
-- A projector displays the live auction.
-- Bids remain hidden until the auction ends.
+The commissioner controls the draft while league members bid privately on their phones.
 
-The application is designed specifically for **live draft night**.
+All bids remain hidden until the auction ends.
 
 ---
 
@@ -124,9 +87,7 @@ Services
 Database
 ```
 
-Routes stay thin.
-
-Business logic belongs in services.
+Business logic belongs inside services.
 
 The server is always the source of truth.
 
@@ -142,26 +103,28 @@ PlayerPage
 ```
 
 ```
-components/player/
+components/
 
-TeamSelector
-Countdown
-AuctionPanel
-MyTeamPanel
+admin/
+player/
+shared/
+
+PlayerCard
+TeamCard
 ```
 
 ```
 hooks/
 
-useAuction (planned)
+useAuction
 ```
 
 ```
 services/
 
 gameService
-bidService
 teamService
+bidService
 playerService
 rosterService
 ```
@@ -178,92 +141,59 @@ bid
 
 ---
 
-# Database
-
-Main tables
-
-- draft_players
-- teams
-- roster
-- auction_bids
-- game
-
-Game stores
-
-- current player
-- countdown
-- current auction
-- last winner
-- winning price
-- winning player
-
----
-
 # Current Features
 
 ## Teams
 
 - Create teams
-- Team budgets
 - Team selection
+- Budget tracking
 
 ## Auction
 
 - Nominate player
 - Hidden sealed bids
-- One bid per team
-- Server countdown
-- Automatic resolution
-- Finish immediately when all teams submit
+- Automatic countdown
+- Automatic finish when all teams submit
+- Winner calculation
 - Budget deduction
-- Add winner to roster
+- Automatic roster update
 
-## Mobile
+## Player
 
-- Join team
-- Live countdown
-- Submit bid
+- Mobile bidding
 - Bid locking
-- WIN / LOSE screen
+- Countdown
+- Win/Lose screen
+- My Team
+- Live roster updates
 
 ## Admin
 
-- Projector board
-- Live countdown
-- Submitted bid counter
-- Reveal bids after auction
-- Prevent nominating drafted players
+- Live draft board
+- Hidden bid count
+- Winner reveal
+- Prevent drafting already drafted players
 
 ## Realtime
 
 - Socket.IO
 - Live countdown
 - Live auction updates
-- Live winner announcement
+- Live roster refresh
 
 ---
 
-# Remaining Roadmap
-
-## Sprint 1
-
-Frontend Refactor
-
-- Shared types
-- MyTeamPanel
-- useAuction
-- PlayerPage cleanup
-
----
+# Roadmap
 
 ## Sprint 2
 
-My Team
+Shared UI
 
-- Live roster
-- Budget remaining
-- Money spent
-- Player count
+- PlayerCard everywhere
+- TeamCard everywhere
+- Mobile polish
+- Projector polish
 
 ---
 
@@ -274,106 +204,45 @@ Undo Last Auction
 - Restore budget
 - Remove roster entry
 - Undraft player
-- Clear last winner
-- Waiting state
+- Clear winner
+- Return to waiting state
 
 ---
 
 ## Sprint 4
 
-Admin Board Polish
-
-- Better projector layout
-- Better countdown
-- Better winner reveal
-- Better auction result presentation
-
----
-
-## Sprint 5
-
 Commissioner Tools
 
 - Search players
-- Position filter
+- Position filters
 - Draft complete screen
 - Reset draft
 
 ---
 
-## Sprint 6
+## Sprint 5
 
 UI Polish
 
+- Animations
 - Better spacing
-- Mobile improvements
-- Loading indicators
+- Loading states
 - Error banners
 - Keyboard shortcuts
-- Countdown animation
+- Countdown animations
 
 ---
 
 # Design Principles
 
 - Server owns all game state.
-- Hidden bids remain hidden until auction completion.
+- Hidden bids remain hidden.
 - Routes stay thin.
 - Services contain business logic.
-- Prefer composition over large React components.
-- Refactor before files become too large.
+- Composition over large components.
+- Shared UI before duplication.
 - One feature per commit.
-- One milestone at a time.
-- Optimize for the real draft-night experience.
-
----
-
-# Git Commit Style
-
-Examples
-
-```
-feat: realtime countdown
-
-feat: my team roster
-
-feat: undo last auction
-
-refactor: split player page
-
-refactor: extract auction panel
-
-fix: roster refresh after auction
-```
-
----
-
-# Version 1.0 Checklist
-
-## Player
-
-- [x] Team selection
-- [x] Hidden bidding
-- [x] Countdown
-- [x] Win / Lose screen
-- [ ] My Team
-
-## Admin
-
-- [x] Team management
-- [x] Nominate player
-- [x] Big-screen board
-- [x] Reveal bids
-- [ ] Undo Last Auction
-- [ ] Search
-- [ ] Position filters
-
-## System
-
-- [x] Socket.IO
-- [x] Server countdown
-- [x] Automatic auction resolution
-- [x] Automatic finish when everyone submits
+- Optimize for draft night.
 
 ---
 
@@ -383,15 +252,10 @@ fix: roster refresh after auction
 
 Completed
 
-- Server-owned countdown
-- Hidden sealed bidding
-- Automatic auction resolution
-- Projector-style admin board
-- Shared frontend types
-- TeamSelector extraction
-- Countdown extraction
-- AuctionPanel extraction
-
-Current work
-
-- MyTeamPanel
+- Player architecture refactor
+- useAuction hook
+- Shared PlayerCard
+- Shared TeamCard
+- Position color system
+- Mobile Player page
+- Automatic roster refresh
