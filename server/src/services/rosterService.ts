@@ -1,4 +1,6 @@
-import { db } from "../database/connection";
+import {
+  db
+} from "../database/connection";
 
 
 export interface RosterPlayer {
@@ -6,6 +8,10 @@ export interface RosterPlayer {
   playerId: number;
   playerName: string;
   position: string;
+  nflTeam: string | null;
+  byeWeek: number | null;
+  rank: number | null;
+  auctionValue: number;
   price: number;
   slot: string;
 }
@@ -34,7 +40,10 @@ function getPositionOrder(
   const normalizedPosition =
     position
       .toUpperCase()
-      .replace(/[0-9]/g, "");
+      .replace(
+        /[0-9]/g,
+        ""
+      );
 
 
   const positionOrder:
@@ -83,7 +92,9 @@ export function getTeamRoster(
         WHERE id = ?
         `
       )
-      .get(teamId) as TeamRow | undefined;
+      .get(
+        teamId
+      ) as TeamRow | undefined;
 
 
   if (!team) {
@@ -98,22 +109,33 @@ export function getTeamRoster(
       .prepare(
         `
         SELECT
-          id,
-          player_id AS playerId,
-          player_name AS playerName,
-          position,
-          price,
-          slot
+          roster.id,
+          roster.player_id AS playerId,
+          roster.player_name AS playerName,
+          roster.position,
+          draft_players.nfl_team AS nflTeam,
+          draft_players.bye_week AS byeWeek,
+          draft_players.rank,
+          draft_players.auction_value AS auctionValue,
+          roster.price,
+          roster.slot
         FROM roster
-        WHERE team_id = ?
-        ORDER BY id ASC
+        INNER JOIN draft_players
+          ON draft_players.id = roster.player_id
+        WHERE roster.team_id = ?
+        ORDER BY roster.id ASC
         `
       )
-      .all(teamId) as RosterPlayer[];
+      .all(
+        teamId
+      ) as RosterPlayer[];
 
 
   players.sort(
-    (firstPlayer, secondPlayer) => {
+    (
+      firstPlayer,
+      secondPlayer
+    ) => {
       const positionDifference =
         getPositionOrder(
           firstPlayer.position
@@ -123,17 +145,17 @@ export function getTeamRoster(
         );
 
 
-      if (positionDifference !== 0) {
+      if (
+        positionDifference !== 0
+      ) {
         return positionDifference;
       }
 
 
-      return (
-        firstPlayer.playerName
-          .localeCompare(
-            secondPlayer.playerName
-          )
-      );
+      return firstPlayer.playerName
+        .localeCompare(
+          secondPlayer.playerName
+        );
     }
   );
 

@@ -95,6 +95,7 @@ export default function MyTeamPanel({
         }
       </div>
 
+
       <div className="roster-summary">
         <div className="roster-summary__item">
           <span className="roster-summary__label">
@@ -127,6 +128,7 @@ export default function MyTeamPanel({
         </div>
       </div>
 
+
       {
         error && (
           <p
@@ -137,6 +139,7 @@ export default function MyTeamPanel({
           </p>
         )
       }
+
 
       {
         roster.players.length === 0 ? (
@@ -154,15 +157,30 @@ export default function MyTeamPanel({
             {
               roster.players.map(
                 player => (
-                <PlayerCard
-                  name={player.name}
-                  position={player.position}
-                  nflTeam={player.nfl_team}
-                  byeWeek={player.bye_week}
-                  rank={player.rank}
-                  auctionValue={player.auction_value}
-                  compact
-                />
+                  <PlayerCard
+                    key={player.id}
+                    name={player.playerName}
+                    position={player.position}
+                    nflTeam={
+                      player.nflTeam ??
+                      undefined
+                    }
+                    byeWeek={
+                      player.byeWeek ??
+                      undefined
+                    }
+                    rank={
+                      player.rank ??
+                      undefined
+                    }
+                    auctionValue={
+                      player.auctionValue
+                    }
+                    salePrice={
+                      player.price
+                    }
+                    compact
+                  />
                 )
               )
             }
