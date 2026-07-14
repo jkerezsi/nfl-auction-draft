@@ -3,31 +3,57 @@ import path from "path";
 import fs from "fs";
 
 
-const databaseFolder =
-  path.join(
-    process.cwd(),
-    "database"
-  );
+const configuredDatabaseFile =
+  process.env.FANTASY_DB_PATH;
 
 
-if (!fs.existsSync(databaseFolder)) {
-
-  fs.mkdirSync(
-    databaseFolder,
-    {
-      recursive: true
-    }
-  );
-
-}
+const isMemoryDatabase =
+  configuredDatabaseFile ===
+  ":memory:";
 
 
 const databaseFile =
-  path.join(
-    databaseFolder,
-    "fantasy.db"
-  );
+  isMemoryDatabase
+    ? ":memory:"
+    : configuredDatabaseFile
+      ? path.resolve(
+          configuredDatabaseFile
+        )
+      : path.join(
+          process.cwd(),
+          "database",
+          "fantasy.db"
+        );
+
+
+if (!isMemoryDatabase) {
+  const databaseFolder =
+    path.dirname(
+      databaseFile
+    );
+
+
+  if (
+    !fs.existsSync(
+      databaseFolder
+    )
+  ) {
+    fs.mkdirSync(
+      databaseFolder,
+      {
+        recursive: true
+      }
+    );
+  }
+}
 
 
 export const db =
-  new Database(databaseFile);
+  new Database(
+    databaseFile
+  );
+
+
+db.pragma(
+  "foreign_keys = ON"
+);
