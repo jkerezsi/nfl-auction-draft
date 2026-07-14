@@ -35,13 +35,56 @@ interface ApiErrorResponse {
 }
 
 
+const BID_STORAGE_PREFIX =
+  "fantasy_bid_submitted_";
+
+
 function getBidStorageKey(
   teamId: number,
   playerId: number
 ) {
   return (
-    `fantasy_bid_submitted_${teamId}_${playerId}`
+    `${BID_STORAGE_PREFIX}${teamId}_${playerId}`
   );
+}
+
+
+function clearStoredBidStates() {
+  const keysToRemove:
+    string[] = [];
+
+
+  for (
+    let index = 0;
+    index < localStorage.length;
+    index += 1
+  ) {
+    const key =
+      localStorage.key(
+        index
+      );
+
+
+    if (
+      key?.startsWith(
+        BID_STORAGE_PREFIX
+      )
+    ) {
+      keysToRemove.push(
+        key
+      );
+    }
+  }
+
+
+  for (
+    const key
+    of keysToRemove
+  ) {
+    localStorage.removeItem(
+      key
+    );
+  }
 }
 
 
@@ -124,6 +167,23 @@ export default function useAuction({
 
 
           if (
+            data.status === "SETUP"
+          ) {
+            clearStoredBidStates();
+
+            setBidSubmitted(
+              false
+            );
+
+            setBidAmount(
+              ""
+            );
+
+            return;
+          }
+
+
+          if (
             selectedTeamId !== null &&
             data.currentPlayerId !== null &&
             data.status === "AUCTION"
@@ -158,12 +218,6 @@ export default function useAuction({
       function handleGameUpdated(
         updatedGame: GameState
       ) {
-        console.log(
-          "GAME_UPDATED:",
-          updatedGame
-        );
-
-
         const previousPlayerId =
           currentPlayerIdRef.current;
 
@@ -182,6 +236,27 @@ export default function useAuction({
         setGame(
           updatedGame
         );
+
+
+        if (
+          updatedGame.status === "SETUP"
+        ) {
+          clearStoredBidStates();
+
+          setBidSubmitted(
+            false
+          );
+
+          setBidAmount(
+            ""
+          );
+
+          setError(
+            ""
+          );
+
+          return;
+        }
 
 
         if (
@@ -255,12 +330,33 @@ export default function useAuction({
 
 
       if (
+        game?.status === "SETUP"
+      ) {
+        clearStoredBidStates();
+
+        setBidSubmitted(
+          false
+        );
+
+        setBidAmount(
+          ""
+        );
+
+        return;
+      }
+
+
+      if (
         game?.status === "AUCTION" &&
         game.currentPlayerId !== null
       ) {
         restoreBidState(
           selectedTeamId,
           game.currentPlayerId
+        );
+      } else {
+        setBidSubmitted(
+          false
         );
       }
     },
@@ -327,7 +423,9 @@ export default function useAuction({
       setBidSubmitted(
         true
       );
-    } catch (requestError: unknown) {
+    } catch (
+      requestError: unknown
+    ) {
       if (
         isAxiosError<ApiErrorResponse>(
           requestError

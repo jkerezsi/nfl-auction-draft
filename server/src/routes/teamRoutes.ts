@@ -1,63 +1,162 @@
-import { Router } from "express";
-
+import {
+  Router
+} from "express";
 
 import {
   getTeams,
-  createTeam
+  createTeam,
+  updateTeam,
+  deleteTeam
 } from "../services/teamService";
 
 
-
-const router = Router();
-
+const router =
+  Router();
 
 
 router.get(
   "/",
-  (_req: any, res: any) => {
-
-    res.json(
-      getTeams()
-    );
-
+  (
+    _req: any,
+    res: any
+  ) => {
+    try {
+      res.json(
+        getTeams()
+      );
+    } catch (
+      error: any
+    ) {
+      res
+        .status(400)
+        .json({
+          error:
+            error.message
+        });
+    }
   }
 );
-
 
 
 router.post(
   "/",
-  (req: any, res: any) => {
+  (
+    req: any,
+    res: any
+  ) => {
+    try {
+      const name =
+        typeof req.body?.name ===
+        "string"
+          ? req.body.name
+          : "";
 
 
-    const name =
-      req.body.name;
+      const team =
+        createTeam(
+          name
+        );
 
 
-
-    if (!name) {
-
-      return res
+      res
+        .status(201)
+        .json(
+          team
+        );
+    } catch (
+      error: any
+    ) {
+      res
         .status(400)
         .json({
-          error: "Team name required"
+          error:
+            error.message
         });
-
     }
-
-
-
-    const team =
-      createTeam(name);
-
-
-
-    res.json(team);
-
-
   }
 );
 
+
+router.patch(
+  "/:teamId",
+  (
+    req: any,
+    res: any
+  ) => {
+    try {
+      const teamId =
+        Number(
+          req.params.teamId
+        );
+
+
+      const name =
+        typeof req.body?.name ===
+        "string"
+          ? req.body.name
+          : "";
+
+
+      const team =
+        updateTeam(
+          teamId,
+          name
+        );
+
+
+      res.json(
+        team
+      );
+    } catch (
+      error: any
+    ) {
+      res
+        .status(400)
+        .json({
+          error:
+            error.message
+        });
+    }
+  }
+);
+
+
+router.delete(
+  "/:teamId",
+  (
+    req: any,
+    res: any
+  ) => {
+    try {
+      const teamId =
+        Number(
+          req.params.teamId
+        );
+
+
+      const result =
+        deleteTeam(
+          teamId
+        );
+
+
+      res.json({
+        message:
+          "Team deleted",
+        ...result
+      });
+    } catch (
+      error: any
+    ) {
+      res
+        .status(400)
+        .json({
+          error:
+            error.message
+        });
+    }
+  }
+);
 
 
 export default router;
