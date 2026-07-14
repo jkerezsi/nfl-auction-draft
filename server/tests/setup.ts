@@ -22,6 +22,21 @@ vi.mock(
 );
 
 
+vi.mock(
+  "../src/services/auctionTimerService",
+  () => ({
+    startAuctionTimer:
+      vi.fn(),
+
+    stopAuctionTimer:
+      vi.fn(),
+
+    resumeAuctionTimer:
+      vi.fn()
+  })
+);
+
+
 beforeAll(
   async () => {
     const {
