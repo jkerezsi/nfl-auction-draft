@@ -1,54 +1,55 @@
 # Fantasy Auction Draft
 
-A real-time fantasy football auction draft application built for live draft night.
+A real-time Fantasy Football Auction Draft application built with React, TypeScript, Express, SQLite and Socket.IO.
 
-Players bid privately on their phones while the commissioner controls the draft from a projector screen.
-
-Hidden sealed bidding keeps every auction fair and exciting until the countdown ends.
+The application provides a commissioner (Admin) interface for managing the auction and a player interface for submitting hidden bids from any device.
 
 ---
 
 ## Features
 
-### Player Experience
+### Commissioner
 
-- Join a fantasy team
-- Submit hidden bids
-- Live countdown
-- Automatic bid locking
-- Win/Lose result screen
-- Live roster updates
-- Remaining budget tracking
-
-### Commissioner Experience
-
-- Manage teams
+- Create teams
+- Edit teams
+- Delete teams
 - Nominate players
-- Live auction board
-- Hidden bid counter
-- Reveal winning bid
-- Prevent duplicate drafting
+- Hidden auction bidding
+- Automatic winner determination
+- Live draft board
+- Reset draft
+- Live auction countdown
+- Player search & filters
+- Player cards with:
+  - Position
+  - Overall Rank
+  - Bye Week
+  - Auction Value ($)
 
-### Realtime
+### Players
 
-- Socket.IO synchronization
-- Live countdown
+- Select and remember team
+- Hidden bidding
 - Live auction updates
-- Automatic roster refresh
+- Auction countdown
+- Win/Loss screen
+- Budget tracking
+- My Team roster
+- Responsive mobile interface
+
+### Auction
+
+- Hidden bids
+- Highest bid wins
+- Tie breaker = earliest bid
+- Budget validation
+- Automatic roster updates
 - Automatic budget updates
+- Automatic auction resolution when all teams submit
 
 ---
 
 ## Tech Stack
-
-### Backend
-
-- Node.js
-- Express
-- TypeScript
-- SQLite
-- better-sqlite3
-- Socket.IO
 
 ### Frontend
 
@@ -58,136 +59,131 @@ Hidden sealed bidding keeps every auction fair and exciting until the countdown 
 - Axios
 - Socket.IO Client
 
+### Backend
+
+- Node.js
+- Express
+- TypeScript
+- Socket.IO
+- SQLite
+- better-sqlite3
+
+### Testing
+
+- Vitest
+- Supertest
+
+---
+
+## Installation
+
+### Backend
+
+```bash
+cd server
+npm install
+npm run dev
+```
+
+Runs on:
+
+```
+http://localhost:3000
+```
+
+---
+
+### Frontend
+
+```bash
+cd client
+npm install
+npm run dev
+```
+
+Runs on:
+
+```
+http://localhost:5173
+```
+
+---
+
+## Import Players
+
+```bash
+npm run import:players
+```
+
+Imports:
+
+- Rank
+- Name
+- Position
+- NFL Team
+- Bye Week
+
+Auction Values can be imported separately using the included import script.
+
+---
+
+## Tests
+
+Run all tests:
+
+```bash
+npm test
+```
+
+Run unit tests only:
+
+```bash
+npx vitest run tests/services
+```
+
+Run integration tests only:
+
+```bash
+npx vitest run tests/routes
+```
+
+Coverage:
+
+```bash
+npm run test:coverage
+```
+
+Current test suite:
+
+- 56 automated tests
+- Unit tests
+- Integration tests
+- End-to-end auction flow
+
 ---
 
 ## Architecture
 
-### Backend
-
 ```
-Routes
-    ↓
-Services
-    ↓
-SQLite
-```
+client/
+    React
+    Components
+    Hooks
+    Services
 
-### Frontend
+server/
+    Routes
+    Services
+    Database
+    Socket.IO
+    Tests
 
-```
-Pages
-    ↓
-Hooks
-    ↓
-Shared Components
-    ↓
-Services
-```
-
-The server owns all game state.
-
-Business logic stays on the backend.
-
-The frontend focuses on presentation and user interaction.
-
----
-
-## Project Structure
-
-```
-src/
-
-components/
-    admin/
-    player/
-    shared/
-
-hooks/
-    useAuction/
-
-pages/
-
-services/
-
-types/
-
-utils/
+database/
+    SQLite
 ```
 
 ---
 
-## Core Design Principles
+## License
 
-- Server is the single source of truth.
-- Hidden bids remain hidden until the auction ends.
-- Shared UI components instead of duplication.
-- Thin pages.
-- Composition over inheritance.
-- Mobile-first experience.
-- Optimize for real draft night.
-
----
-
-## Current Status
-
-### Completed
-
-- Team management
-- Hidden bidding
-- Live countdown
-- Automatic auction resolution
-- Live roster updates
-- Mobile player interface
-- Shared PlayerCard
-- Shared TeamCard
-
-### In Progress
-
-- Admin UI polish
-- Shared UI rollout
-- Commissioner tools
-
----
-
-## Planned Features
-
-- Undo last auction
-- Search players
-- Position filters
-- Draft completion screen
-- Draft reset
-- Enhanced projector layout
-
----
-
-## Development
-
-### Install
-
-```bash
-npm install
-```
-
-### Backend
-
-```bash
-npm run dev
-```
-
-### Frontend
-
-```bash
-npm run dev
-```
-
----
-
-## Vision
-
-The goal of this project is to create the best possible live fantasy football auction draft experience.
-
-The application is designed around three principles:
-
-- Fast
-- Mobile-first
-- Realtime
+Personal project.
