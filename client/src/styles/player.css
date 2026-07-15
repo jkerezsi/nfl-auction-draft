@@ -1029,3 +1029,88 @@
     transition: none;
   }
 }
+
+/* ==========================================
+   Structured Roster
+========================================== */
+
+.structured-roster {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.structured-roster__section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.structured-roster__heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.structured-roster__heading h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.structured-roster__heading span {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.structured-roster__slots {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.roster-slot {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--card-background);
+}
+
+.roster-slot__label {
+  padding: 0.6rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.roster-slot__content {
+  padding: 0.75rem;
+}
+
+.roster-slot--empty {
+  opacity: 0.75;
+}
+
+.roster-slot__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  min-height: 72px;
+  border: 2px dashed var(--border-color);
+  border-radius: 10px;
+  color: var(--text-secondary);
+}
+
+.roster-slot__placeholder-icon {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.roster-slot--filled .player-card {
+  margin: 0;
+}

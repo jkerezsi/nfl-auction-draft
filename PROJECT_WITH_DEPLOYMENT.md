@@ -1,8 +1,3 @@
-Library
-/
-PROJECT_UPDATED.md
-
-
 # Fantasy Auction Draft
 
 ## Project Status
@@ -295,6 +290,117 @@ This prevents an auto-managed team from reaching `$0` while roster spots remain 
 4. Preview matched, invalid, duplicate, and unmatched entries.
 5. Confirm import.
 6. Enable auto-bid mode for that team.
+
+
+## 10. Railway Production Deployment — 2–4 days
+
+Deploy the application to Railway for temporary draft-week use.
+
+### Target architecture
+
+```text
+bigballers.hu
+    ↓
+Railway
+    ↓
+Single Docker service
+    ├── React production build
+    ├── Express API
+    ├── Socket.IO
+    └── SQLite on persistent Railway volume
+```
+
+The deployment remains a modular monolith. Docker is used as the deployment unit; the application is not split into microservices.
+
+### Phase 1 — Production preparation
+
+- Add production build scripts for client and server.
+- Make API and Socket.IO URLs work on the same domain.
+- Move hardcoded configuration to environment variables.
+- Add `/api/health`.
+- Add graceful server shutdown.
+- Verify SQLite uses `FANTASY_DB_PATH`.
+
+### Phase 2 — Single production container
+
+- Add a root production `Dockerfile`.
+- Build the React client.
+- Build the TypeScript server.
+- Copy the React build into the server image.
+- Serve React static files through Express.
+- Keep `/api/*` and `/socket.io/*` handled by the backend.
+- Use a Debian-based Node image for `better-sqlite3`.
+
+### Phase 3 — Railway project
+
+- Create Railway project from GitHub.
+- Deploy the Docker service.
+- Attach a persistent volume at `/app/data`.
+- Set environment variables:
+
+```text
+NODE_ENV=production
+PORT=3000
+FANTASY_DB_PATH=/app/data/fantasy.db
+CLIENT_ORIGIN=https://bigballers.hu
+```
+
+- Verify health checks and application logs.
+
+### Phase 4 — Domain and HTTPS
+
+- Add `bigballers.hu` as the Railway custom domain.
+- Add Railway-provided DNS records.
+- Verify HTTPS.
+- Verify `/admin`, `/api`, and Socket.IO traffic through the same domain.
+
+### Phase 5 — Production database
+
+- Initialize the production schema.
+- Import the current player list and AAV data.
+- Confirm the configured starting budget and timer.
+- Verify the SQLite file is stored on the Railway volume.
+- Confirm the database survives redeployment.
+
+### Phase 6 — Draft-night validation
+
+Test with:
+
+- Admin browser
+- Two or more player phones
+- Mobile data and Wi-Fi
+- Projector or large display
+- Nomination
+- Hidden bids
+- Automatic resolution
+- Roster and budget updates
+- Team edit/delete
+- Reset Draft
+- Browser refresh and reconnect
+- Container restart and database persistence
+
+### Phase 7 — Backups and shutdown
+
+Before draft night:
+
+- Create a Railway volume backup.
+- Download or copy the SQLite database.
+- Verify the backup opens successfully.
+
+After the draft:
+
+- Create a final backup.
+- Download the final database.
+- Stop or remove the Railway service.
+- Keep the Railway project configuration for next season.
+- Remove the persistent volume only after the backup is verified.
+
+### Expected operating model
+
+- Run the deployment several days before the draft.
+- Use it for testing and draft night.
+- Stop the service after the event.
+- Expected active-month cost target: under `$10`.
 
 ---
 

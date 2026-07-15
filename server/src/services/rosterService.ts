@@ -2,6 +2,10 @@ import {
   db
 } from "../database/connection";
 
+import {
+  getRosterSlotOrder
+} from "./rosterSlotService";
+
 
 export interface RosterPlayer {
   id: number;
@@ -34,44 +38,13 @@ interface TeamRow {
 }
 
 
-function getPositionOrder(
-  position: string
-): number {
-  const normalizedPosition =
-    position
-      .toUpperCase()
-      .replace(
-        /[0-9]/g,
-        ""
-      );
-
-
-  const positionOrder:
-    Record<string, number> = {
-      QB: 1,
-      RB: 2,
-      WR: 3,
-      TE: 4,
-      FLEX: 5,
-      K: 6,
-      DST: 7,
-      DEF: 7,
-      BENCH: 8
-    };
-
-
-  return (
-    positionOrder[normalizedPosition] ??
-    99
-  );
-}
-
-
 export function getTeamRoster(
   teamId: number
 ): TeamRoster {
   if (
-    !Number.isInteger(teamId) ||
+    !Number.isInteger(
+      teamId
+    ) ||
     teamId <= 0
   ) {
     throw new Error(
@@ -110,19 +83,37 @@ export function getTeamRoster(
         `
         SELECT
           roster.id,
-          roster.player_id AS playerId,
-          roster.player_name AS playerName,
+
+          roster.player_id
+            AS playerId,
+
+          roster.player_name
+            AS playerName,
+
           roster.position,
-          draft_players.nfl_team AS nflTeam,
-          draft_players.bye_week AS byeWeek,
+
+          draft_players.nfl_team
+            AS nflTeam,
+
+          draft_players.bye_week
+            AS byeWeek,
+
           draft_players.rank,
-          draft_players.auction_value AS auctionValue,
+
+          draft_players.auction_value
+            AS auctionValue,
+
           roster.price,
           roster.slot
+
         FROM roster
+
         INNER JOIN draft_players
-          ON draft_players.id = roster.player_id
+          ON draft_players.id =
+            roster.player_id
+
         WHERE roster.team_id = ?
+
         ORDER BY roster.id ASC
         `
       )
@@ -136,26 +127,26 @@ export function getTeamRoster(
       firstPlayer,
       secondPlayer
     ) => {
-      const positionDifference =
-        getPositionOrder(
-          firstPlayer.position
+      const slotDifference =
+        getRosterSlotOrder(
+          firstPlayer.slot
         ) -
-        getPositionOrder(
-          secondPlayer.position
+        getRosterSlotOrder(
+          secondPlayer.slot
         );
 
 
       if (
-        positionDifference !== 0
+        slotDifference !== 0
       ) {
-        return positionDifference;
+        return slotDifference;
       }
 
 
-      return firstPlayer.playerName
-        .localeCompare(
-          secondPlayer.playerName
-        );
+      return (
+        firstPlayer.id -
+        secondPlayer.id
+      );
     }
   );
 
@@ -166,7 +157,8 @@ export function getTeamRoster(
         total,
         player
       ) =>
-        total + player.price,
+        total +
+        player.price,
       0
     );
 
