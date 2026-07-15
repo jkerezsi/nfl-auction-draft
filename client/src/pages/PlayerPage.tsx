@@ -5,11 +5,16 @@ import {
 } from "react";
 
 import {
+  isAxiosError
+} from "axios";
+
+import {
   getTeams
 } from "../services/teamService";
 
 import {
-  getRoster
+  getRoster,
+  releasePlayer
 } from "../services/rosterService";
 
 import {
@@ -31,6 +36,7 @@ import type {
 } from "../types/team";
 
 import type {
+  RosterPlayer,
   TeamRoster
 } from "../types/roster";
 
@@ -38,6 +44,11 @@ import type {
 type Tab =
   | "auction"
   | "team";
+
+
+interface ApiErrorResponse {
+  error?: string;
+}
 
 
 function PlayerPage() {
@@ -59,6 +70,14 @@ function PlayerPage() {
 
   const [rosterError, setRosterError] =
     useState("");
+
+  const [
+    releasingRosterId,
+    setReleasingRosterId
+  ] =
+    useState<number | null>(
+      null
+    );
 
   const [activeTab, setActiveTab] =
     useState<Tab>(
@@ -95,12 +114,6 @@ function PlayerPage() {
       async (
         teamId: number
       ) => {
-        console.log(
-          "Loading roster for team:",
-          teamId
-        );
-
-
         setRosterLoading(
           true
         );
@@ -117,22 +130,10 @@ function PlayerPage() {
             );
 
 
-          console.log(
-            "Roster response:",
-            data
-          );
-
-
           setRoster(
             data
           );
-        } catch (requestError: unknown) {
-          console.error(
-            "Roster request failed:",
-            requestError
-          );
-
-
+        } catch {
           setRosterError(
             "Could not load your roster."
           );
@@ -207,6 +208,10 @@ function PlayerPage() {
           false
         );
 
+        setReleasingRosterId(
+          null
+        );
+
         return;
       }
 
@@ -261,6 +266,10 @@ function PlayerPage() {
       false
     );
 
+    setReleasingRosterId(
+      null
+    );
+
     setActiveTab(
       "auction"
     );
@@ -268,6 +277,78 @@ function PlayerPage() {
     setPageError(
       ""
     );
+  }
+
+
+  async function handleReleasePlayer(
+    player: RosterPlayer
+  ) {
+    if (
+      selectedTeamId === null
+    ) {
+      return;
+    }
+
+
+    const confirmed =
+      window.confirm(
+        `Release ${player.playerName}? ` +
+        `$${player.price} will be refunded and the player will return to the pool.`
+      );
+
+
+    if (!confirmed) {
+      return;
+    }
+
+
+    try {
+      setRosterError(
+        ""
+      );
+
+      setPageError(
+        ""
+      );
+
+      setReleasingRosterId(
+        player.id
+      );
+
+
+      await releasePlayer(
+        player.id
+      );
+
+
+      await Promise.all([
+        loadRoster(
+          selectedTeamId
+        ),
+        loadTeams()
+      ]);
+    } catch (
+      requestError: unknown
+    ) {
+      if (
+        isAxiosError<ApiErrorResponse>(
+          requestError
+        )
+      ) {
+        setRosterError(
+          requestError.response?.data?.error ??
+          "Could not release the player."
+        );
+      } else {
+        setRosterError(
+          "Could not release the player."
+        );
+      }
+    } finally {
+      setReleasingRosterId(
+        null
+      );
+    }
   }
 
 
@@ -429,6 +510,15 @@ function PlayerPage() {
               }
               error={
                 rosterError
+              }
+              releasingRosterId={
+                releasingRosterId
+              }
+              onReleasePlayer={
+                player =>
+                  void handleReleasePlayer(
+                    player
+                  )
               }
             />
           )

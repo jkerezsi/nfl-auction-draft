@@ -1,4 +1,6 @@
-import PlayerCard from "../../shared/PlayerCard";
+import RosterView, {
+  TOTAL_ROSTER_SLOTS
+} from "../../shared/RosterView";
 
 import type {
   RosterPlayer,
@@ -10,201 +12,22 @@ interface MyTeamPanelProps {
   roster: TeamRoster | null;
   loading: boolean;
   error: string;
-}
 
+  releasingRosterId:
+    number | null;
 
-interface RosterSlotDefinition {
-  id: string;
-  label: string;
-  group:
-    | "starters"
-    | "bench";
-}
-
-
-const ROSTER_SLOTS:
-  RosterSlotDefinition[] = [
-    {
-      id: "QB",
-      label: "QB",
-      group: "starters"
-    },
-    {
-      id: "RB1",
-      label: "RB",
-      group: "starters"
-    },
-    {
-      id: "RB2",
-      label: "RB",
-      group: "starters"
-    },
-    {
-      id: "WR1",
-      label: "WR",
-      group: "starters"
-    },
-    {
-      id: "WR2",
-      label: "WR",
-      group: "starters"
-    },
-    {
-      id: "TE",
-      label: "TE",
-      group: "starters"
-    },
-    {
-      id: "FLEX",
-      label: "FLEX",
-      group: "starters"
-    },
-    {
-      id: "K",
-      label: "K",
-      group: "starters"
-    },
-    {
-      id: "DST",
-      label: "DST",
-      group: "starters"
-    },
-    {
-      id: "BENCH1",
-      label: "BENCH 1",
-      group: "bench"
-    },
-    {
-      id: "BENCH2",
-      label: "BENCH 2",
-      group: "bench"
-    },
-    {
-      id: "BENCH3",
-      label: "BENCH 3",
-      group: "bench"
-    },
-    {
-      id: "BENCH4",
-      label: "BENCH 4",
-      group: "bench"
-    },
-    {
-      id: "BENCH5",
-      label: "BENCH 5",
-      group: "bench"
-    },
-    {
-      id: "BENCH6",
-      label: "BENCH 6",
-      group: "bench"
-    }
-  ];
-
-
-function normalizeSlot(
-  slot: string
-): string {
-  return slot
-    .trim()
-    .toUpperCase();
-}
-
-
-function getPlayerForSlot(
-  players: RosterPlayer[],
-  slotId: string
-): RosterPlayer | null {
-  return (
-    players.find(
-      player =>
-        normalizeSlot(
-          player.slot
-        ) === slotId
-    ) ??
-    null
-  );
-}
-
-
-function renderRosterSlot(
-  slot: RosterSlotDefinition,
-  players: RosterPlayer[]
-) {
-  const player =
-    getPlayerForSlot(
-      players,
-      slot.id
-    );
-
-
-  return (
-    <div
-      key={slot.id}
-      className={
-        `roster-slot ${
-          player
-            ? "roster-slot--filled"
-            : "roster-slot--empty"
-        }`
-      }
-    >
-      <div className="roster-slot__label">
-        {slot.label}
-      </div>
-
-      <div className="roster-slot__content">
-        {
-          player ? (
-            <PlayerCard
-              name={
-                player.playerName
-              }
-              position={
-                player.position
-              }
-              nflTeam={
-                player.nflTeam ??
-                undefined
-              }
-              byeWeek={
-                player.byeWeek ??
-                undefined
-              }
-              rank={
-                player.rank ??
-                undefined
-              }
-              auctionValue={
-                player.auctionValue
-              }
-              salePrice={
-                player.price
-              }
-              compact
-            />
-          ) : (
-            <div className="roster-slot__placeholder">
-              <span className="roster-slot__placeholder-icon">
-                +
-              </span>
-
-              <span>
-                Empty
-              </span>
-            </div>
-          )
-        }
-      </div>
-    </div>
-  );
+  onReleasePlayer: (
+    player: RosterPlayer
+  ) => void;
 }
 
 
 export default function MyTeamPanel({
   roster,
   loading,
-  error
+  error,
+  releasingRosterId,
+  onReleasePlayer
 }: MyTeamPanelProps) {
   if (
     loading &&
@@ -262,22 +85,6 @@ export default function MyTeamPanel({
   }
 
 
-  const starterSlots =
-    ROSTER_SLOTS.filter(
-      slot =>
-        slot.group ===
-        "starters"
-    );
-
-
-  const benchSlots =
-    ROSTER_SLOTS.filter(
-      slot =>
-        slot.group ===
-        "bench"
-    );
-
-
   return (
     <section className="player-card my-team-panel">
       <div className="my-team-heading">
@@ -300,7 +107,6 @@ export default function MyTeamPanel({
         }
       </div>
 
-
       <div className="roster-summary">
         <div className="roster-summary__item">
           <span className="roster-summary__label">
@@ -310,7 +116,7 @@ export default function MyTeamPanel({
           <strong className="roster-summary__value">
             {roster.playerCount}
             {" / "}
-            {ROSTER_SLOTS.length}
+            {TOTAL_ROSTER_SLOTS}
           </strong>
         </div>
 
@@ -335,7 +141,6 @@ export default function MyTeamPanel({
         </div>
       </div>
 
-
       {
         error && (
           <p
@@ -347,57 +152,35 @@ export default function MyTeamPanel({
         )
       }
 
-
-      <div className="structured-roster">
-        <div className="structured-roster__section">
-          <div className="structured-roster__heading">
-            <h3>
-              Starting Lineup
-            </h3>
-
-            <span>
-              9 slots
-            </span>
-          </div>
-
-          <div className="structured-roster__slots">
-            {
-              starterSlots.map(
-                slot =>
-                  renderRosterSlot(
-                    slot,
-                    roster.players
+      <RosterView
+        roster={
+          roster
+        }
+        renderPlayerActions={
+          player => (
+            <button
+              type="button"
+              onClick={
+                () =>
+                  onReleasePlayer(
+                    player
                   )
-              )
-            }
-          </div>
-        </div>
-
-
-        <div className="structured-roster__section">
-          <div className="structured-roster__heading">
-            <h3>
-              Bench
-            </h3>
-
-            <span>
-              6 slots
-            </span>
-          </div>
-
-          <div className="structured-roster__slots">
-            {
-              benchSlots.map(
-                slot =>
-                  renderRosterSlot(
-                    slot,
-                    roster.players
-                  )
-              )
-            }
-          </div>
-        </div>
-      </div>
+              }
+              disabled={
+                releasingRosterId !== null
+              }
+              className="roster-release-button"
+            >
+              {
+                releasingRosterId ===
+                  player.id
+                  ? "Releasing..."
+                  : "Release"
+              }
+            </button>
+          )
+        }
+      />
     </section>
   );
 }

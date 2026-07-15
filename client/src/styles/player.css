@@ -1114,3 +1114,38 @@
 .roster-slot--filled .player-card {
   margin: 0;
 }
+
+.roster-slot__player {
+  display: grid;
+  gap: 10px;
+}
+
+
+.roster-slot__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.roster-release-button {
+  padding: 8px 12px;
+  border: 1px solid #fca5a5;
+  border-radius: 9px;
+  color: #991b1b;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 800;
+  background: #fff1f2;
+  cursor: pointer;
+}
+
+
+.roster-release-button:hover:not(:disabled) {
+  background: #ffe4e6;
+}
+
+
+.roster-release-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
