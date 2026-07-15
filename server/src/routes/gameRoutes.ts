@@ -17,6 +17,9 @@ import {
   broadcastGameUpdated
 } from "../socket/socket";
 
+import {
+  requireAdmin
+} from "../middleware/requireAdmin";
 
 const router =
   Router();
@@ -48,6 +51,7 @@ router.get(
 
 router.post(
   "/nominate/:playerId",
+  requireAdmin,
   (
     req: any,
     res: any
@@ -90,6 +94,7 @@ router.post(
 
 router.post(
   "/reset",
+  requireAdmin,
   (
     _req: any,
     res: any

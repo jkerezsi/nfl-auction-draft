@@ -1,6 +1,9 @@
+import "dotenv/config";
+
 import express from "express";
 import cors from "cors";
 
+import adminAuthRoutes from "./routes/adminAuthRoutes";
 import teamRoutes from "./routes/teamRoutes";
 import playerRoutes from "./routes/playerRoutes";
 import gameRoutes from "./routes/gameRoutes";
@@ -12,16 +15,27 @@ const app =
   express();
 
 
+const clientOrigin =
+  process.env.CLIENT_ORIGIN ??
+  "http://localhost:5173";
+
+
 app.use(
   cors({
     origin:
-      "http://localhost:5173"
+      clientOrigin
   })
 );
 
 
 app.use(
   express.json()
+);
+
+
+app.use(
+  "/api/admin-auth",
+  adminAuthRoutes
 );
 
 
@@ -52,6 +66,20 @@ app.use(
 app.use(
   "/api/bid",
   bidRoutes
+);
+
+
+app.get(
+  "/api/health",
+  (
+    _req,
+    res
+  ) => {
+    res.json({
+      status:
+        "ok"
+    });
+  }
 );
 
 

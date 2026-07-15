@@ -18,6 +18,9 @@ import {
   broadcastGameUpdated
 } from "../socket/socket";
 
+import {
+  requireAdmin
+} from "../middleware/requireAdmin";
 
 const router =
   Router();
@@ -158,6 +161,7 @@ router.get(
 
 router.post(
   "/resolve/:playerId",
+  requireAdmin,
   (req: any, res: any) => {
     try {
       const playerId =

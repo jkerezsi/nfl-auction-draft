@@ -11,7 +11,9 @@ import { getPlayers } from "../services/playerService";
 
 import Countdown from "../components/player/Countdown";
 import PlayerCard from "../shared/PlayerCard";
-
+import {
+  logout
+} from "../services/adminAuthService";
 import {
   getGameState,
   nominatePlayer,
@@ -326,6 +328,12 @@ export default function AdminPage() {
     return teams.find((team) => team.id === teamId)?.name ?? `Team ${teamId}`;
   }
 
+  function handleLogout() {
+  logout();
+
+  window.location.reload();
+}
+
   function normalizePosition(position: string): PositionFilter | string {
     const normalized = position.trim().toUpperCase();
 
@@ -404,6 +412,20 @@ export default function AdminPage() {
             gap: "16px",
           }}
         >
+          <button
+          type="button"
+          onClick={handleLogout}
+          style={{
+            padding: "10px 16px",
+            border: "1px solid #6b7280",
+            borderRadius: "8px",
+            background: "#374151",
+            color: "white",
+            cursor: "pointer",
+          }}
+        >
+          Logout
+        </button>
           <div
             style={{
               fontSize: "20px",
@@ -411,7 +433,6 @@ export default function AdminPage() {
           >
             Teams: {teams.length}
           </div>
-
           {confirmReset && (
             <button
               type="button"

@@ -9,6 +9,9 @@ import {
   deleteTeam
 } from "../services/teamService";
 
+import {
+  requireAdmin
+} from "../middleware/requireAdmin";
 
 const router =
   Router();
@@ -40,6 +43,7 @@ router.get(
 
 router.post(
   "/",
+  requireAdmin,
   (
     req: any,
     res: any
@@ -79,6 +83,7 @@ router.post(
 
 router.patch(
   "/:teamId",
+  requireAdmin,
   (
     req: any,
     res: any
@@ -123,6 +128,7 @@ router.patch(
 
 router.delete(
   "/:teamId",
+  requireAdmin,
   (
     req: any,
     res: any

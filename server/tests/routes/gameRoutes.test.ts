@@ -21,6 +21,10 @@ import {
   setGameState
 } from "../helpers/database";
 
+import {
+  getAdminAuthorizationHeader
+} from "../helpers/adminAuth";
+
 
 describe(
   "game routes",
@@ -67,6 +71,9 @@ describe(
     it(
       "nominates a player and starts the timer",
       async () => {
+        const authorization =
+          await getAdminAuthorizationHeader();
+
         const playerId =
           createTestPlayer({
             name:
@@ -80,6 +87,10 @@ describe(
           )
             .post(
               `/api/game/nominate/${playerId}`
+            )
+            .set(
+              "Authorization",
+              authorization
             );
 
 
@@ -115,6 +126,9 @@ describe(
     it(
       "rejects nomination of a drafted player",
       async () => {
+        const authorization =
+          await getAdminAuthorizationHeader();
+
         const playerId =
           createTestPlayer({
             drafted:
@@ -128,6 +142,10 @@ describe(
           )
             .post(
               `/api/game/nominate/${playerId}`
+            )
+            .set(
+              "Authorization",
+              authorization
             );
 
 
@@ -149,6 +167,9 @@ describe(
     it(
       "resets the complete draft",
       async () => {
+        const authorization =
+          await getAdminAuthorizationHeader();
+
         const teamId =
           createTestTeam(
             "Alpha",
@@ -194,6 +215,10 @@ describe(
           )
             .post(
               "/api/game/reset"
+            )
+            .set(
+              "Authorization",
+              authorization
             );
 
 
@@ -219,6 +244,37 @@ describe(
             stopAuctionTimer
           )
         ).toHaveBeenCalled();
+      }
+    );
+
+
+    it(
+      "requires admin authentication for nomination",
+      async () => {
+        const playerId =
+          createTestPlayer();
+
+
+        const response =
+          await request(
+            app
+          )
+            .post(
+              `/api/game/nominate/${playerId}`
+            );
+
+
+        expect(
+          response.status
+        ).toBe(
+          401
+        );
+
+        expect(
+          response.body.error
+        ).toBe(
+          "Admin authentication required"
+        );
       }
     );
   }

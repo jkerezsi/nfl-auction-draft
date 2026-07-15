@@ -14,6 +14,10 @@ import {
   setGameState
 } from "../helpers/database";
 
+import {
+  getAdminAuthorizationHeader
+} from "../helpers/adminAuth";
+
 
 describe(
   "team routes",
@@ -21,12 +25,20 @@ describe(
     it(
       "creates and lists teams",
       async () => {
+        const authorization =
+          await getAdminAuthorizationHeader();
+
+
         const createResponse =
           await request(
             app
           )
             .post(
               "/api/team"
+            )
+            .set(
+              "Authorization",
+              authorization
             )
             .send({
               name:
@@ -84,12 +96,20 @@ describe(
     it(
       "rejects an empty team name",
       async () => {
+        const authorization =
+          await getAdminAuthorizationHeader();
+
+
         const response =
           await request(
             app
           )
             .post(
               "/api/team"
+            )
+            .set(
+              "Authorization",
+              authorization
             )
             .send({
               name:
@@ -115,6 +135,9 @@ describe(
     it(
       "renames a team",
       async () => {
+        const authorization =
+          await getAdminAuthorizationHeader();
+
         const teamId =
           createTestTeam(
             "Alpha"
@@ -127,6 +150,10 @@ describe(
           )
             .patch(
               `/api/team/${teamId}`
+            )
+            .set(
+              "Authorization",
+              authorization
             )
             .send({
               name:
@@ -152,6 +179,9 @@ describe(
     it(
       "rejects a duplicate renamed team",
       async () => {
+        const authorization =
+          await getAdminAuthorizationHeader();
+
         const firstTeamId =
           createTestTeam(
             "Alpha"
@@ -168,6 +198,10 @@ describe(
           )
             .patch(
               `/api/team/${firstTeamId}`
+            )
+            .set(
+              "Authorization",
+              authorization
             )
             .send({
               name:
@@ -193,6 +227,9 @@ describe(
     it(
       "deletes a team",
       async () => {
+        const authorization =
+          await getAdminAuthorizationHeader();
+
         const teamId =
           createTestTeam(
             "Alpha"
@@ -205,6 +242,10 @@ describe(
           )
             .delete(
               `/api/team/${teamId}`
+            )
+            .set(
+              "Authorization",
+              authorization
             );
 
 
@@ -244,6 +285,9 @@ describe(
     it(
       "rejects deletion during an active auction",
       async () => {
+        const authorization =
+          await getAdminAuthorizationHeader();
+
         const teamId =
           createTestTeam(
             "Alpha"
@@ -269,6 +313,10 @@ describe(
           )
             .delete(
               `/api/team/${teamId}`
+            )
+            .set(
+              "Authorization",
+              authorization
             );
 
 
@@ -282,6 +330,37 @@ describe(
           response.body.error
         ).toBe(
           "A team cannot be deleted during an active auction"
+        );
+      }
+    );
+
+
+    it(
+      "requires admin authentication for team creation",
+      async () => {
+        const response =
+          await request(
+            app
+          )
+            .post(
+              "/api/team"
+            )
+            .send({
+              name:
+                "Alpha"
+            });
+
+
+        expect(
+          response.status
+        ).toBe(
+          401
+        );
+
+        expect(
+          response.body.error
+        ).toBe(
+          "Admin authentication required"
         );
       }
     );

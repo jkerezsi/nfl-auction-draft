@@ -12,6 +12,10 @@ import {
   createTestPlayer
 } from "../helpers/database";
 
+import {
+  getAdminAuthorizationHeader
+} from "../helpers/adminAuth";
+
 
 describe(
   "complete auction API flow",
@@ -19,6 +23,10 @@ describe(
     it(
       "creates teams, nominates, bids, resolves and exposes the winner roster",
       async () => {
+        const authorization =
+          await getAdminAuthorizationHeader();
+
+
         const firstTeamResponse =
           await request(
             app
@@ -26,10 +34,22 @@ describe(
             .post(
               "/api/team"
             )
+            .set(
+              "Authorization",
+              authorization
+            )
             .send({
               name:
                 "Alpha"
             });
+
+
+        expect(
+          firstTeamResponse.status
+        ).toBe(
+          201
+        );
+
 
         const secondTeamResponse =
           await request(
@@ -38,10 +58,21 @@ describe(
             .post(
               "/api/team"
             )
+            .set(
+              "Authorization",
+              authorization
+            )
             .send({
               name:
                 "Beta"
             });
+
+
+        expect(
+          secondTeamResponse.status
+        ).toBe(
+          201
+        );
 
 
         const firstTeamId =
@@ -55,14 +86,19 @@ describe(
           createTestPlayer({
             rank:
               1,
+
             name:
               "Jahmyr Gibbs",
+
             position:
               "RB1",
+
             nflTeam:
               "DET",
+
             byeWeek:
               6,
+
             auctionValue:
               57
           });
@@ -74,6 +110,10 @@ describe(
           )
             .post(
               `/api/game/nominate/${playerId}`
+            )
+            .set(
+              "Authorization",
+              authorization
             );
 
 
@@ -101,11 +141,19 @@ describe(
             .send({
               teamId:
                 firstTeamId,
+
               playerId,
+
               amount:
                 45
             });
 
+
+        expect(
+          firstBidResponse.status
+        ).toBe(
+          200
+        );
 
         expect(
           firstBidResponse.body
@@ -125,11 +173,19 @@ describe(
             .send({
               teamId:
                 secondTeamId,
+
               playerId,
+
               amount:
                 51
             });
 
+
+        expect(
+          secondBidResponse.status
+        ).toBe(
+          200
+        );
 
         expect(
           secondBidResponse.body
@@ -156,6 +212,13 @@ describe(
             );
 
 
+        expect(
+          teamsResponse.status
+        ).toBe(
+          200
+        );
+
+
         const winningTeam =
           teamsResponse.body.find(
             (
@@ -167,6 +230,10 @@ describe(
               secondTeamId
           );
 
+
+        expect(
+          winningTeam
+        ).toBeDefined();
 
         expect(
           winningTeam.budget
@@ -195,8 +262,10 @@ describe(
         ).toMatchObject({
           teamId:
             secondTeamId,
+
           spent:
             51,
+
           playerCount:
             1
         });
@@ -206,14 +275,21 @@ describe(
             .players[0]
         ).toMatchObject({
           playerId,
+
           playerName:
             "Jahmyr Gibbs",
+
           position:
             "RB1",
+
           auctionValue:
             57,
+
           price:
-            51
+            51,
+
+          slot:
+            "RB1"
         });
 
 
@@ -224,6 +300,13 @@ describe(
             .get(
               "/api/players"
             );
+
+
+        expect(
+          playersResponse.status
+        ).toBe(
+          200
+        );
 
 
         const draftedPlayer =
@@ -237,6 +320,10 @@ describe(
               playerId
           );
 
+
+        expect(
+          draftedPlayer
+        ).toBeDefined();
 
         expect(
           draftedPlayer.drafted
@@ -255,14 +342,23 @@ describe(
 
 
         expect(
+          gameResponse.status
+        ).toBe(
+          200
+        );
+
+        expect(
           gameResponse.body
         ).toMatchObject({
           status:
             "RESULT",
+
           lastWinnerTeamId:
             secondTeamId,
+
           lastWinnerPrice:
             51,
+
           lastWinnerPlayerId:
             playerId
         });

@@ -1,3 +1,5 @@
+import bcrypt from "bcryptjs";
+
 import {
   afterAll,
   beforeAll,
@@ -8,6 +10,21 @@ import {
 
 process.env.FANTASY_DB_PATH =
   ":memory:";
+
+
+process.env.ADMIN_PIN_HASH =
+  bcrypt.hashSync(
+    "4827",
+    4
+  );
+
+
+process.env.ADMIN_JWT_SECRET =
+  "test-admin-jwt-secret-that-is-at-least-32-characters";
+
+
+process.env.ADMIN_SESSION_HOURS =
+  "12";
 
 
 vi.mock(
@@ -41,9 +58,10 @@ beforeAll(
   async () => {
     const {
       initializeTestDatabase
-    } = await import(
-      "./helpers/database"
-    );
+    } =
+      await import(
+        "./helpers/database"
+      );
 
 
     initializeTestDatabase();
@@ -55,9 +73,10 @@ beforeEach(
   async () => {
     const {
       resetTestDatabase
-    } = await import(
-      "./helpers/database"
-    );
+    } =
+      await import(
+        "./helpers/database"
+      );
 
 
     resetTestDatabase();
@@ -72,9 +91,10 @@ afterAll(
   async () => {
     const {
       db
-    } = await import(
-      "../src/database/connection"
-    );
+    } =
+      await import(
+        "../src/database/connection"
+      );
 
 
     db.close();
