@@ -1,3 +1,9 @@
 database/fantasy.db
 node_modules/
 .env
+dist/
+build/
+*.db
+*.db-shm
+*.db-wal
+coverage/
