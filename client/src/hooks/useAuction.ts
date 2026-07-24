@@ -261,7 +261,8 @@ export default function useAuction({
 
         if (
           isNewAuctionPlayer &&
-          selectedTeamId !== null
+          selectedTeamId !== null &&
+          updatedGame.currentPlayerId !== null
         ) {
           restoreBidState(
             selectedTeamId,

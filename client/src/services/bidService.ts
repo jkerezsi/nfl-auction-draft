@@ -3,7 +3,7 @@ import api from "./api";
 import type {
   AuctionBid,
   SubmitBidResponse
-} from "../types/bit";
+} from "../types/bid";
 
 
 export async function submitBid(
