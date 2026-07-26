@@ -8,7 +8,7 @@ import { db } from "../database/connection";
 const csvFile =
   path.join(
     process.cwd(),
-    "../server/nfl_top_250.csv"
+    "../server/database/nfl_top_250_with_auction_values.csv"
   );
 
 
