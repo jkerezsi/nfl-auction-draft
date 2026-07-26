@@ -7,8 +7,10 @@ import app from "./app";
 import { initializeDatabase } from "./database/init";
 import { initializeSocket } from "./socket";
 import { resumeAuctionTimer } from "./services/auctionTimerService";
+import { bootstrapPlayers } from "./database/bootstrapPlayers";
 
 initializeDatabase();
+bootstrapPlayers();
 
 const server = http.createServer(app);
 
