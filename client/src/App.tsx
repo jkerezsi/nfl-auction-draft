@@ -9,8 +9,13 @@ import {
   useState
 } from "react";
 
+import type {
+  ReactNode
+} from "react";
+
 import PlayerPage from "./pages/PlayerPage";
 import AdminPage from "./pages/AdminPage";
+import AdminRostersPage from "./pages/AdminRostersPage";
 
 import AdminLogin from "./components/admin/AdminLogin";
 
@@ -20,7 +25,14 @@ import {
 } from "./services/adminAuthService";
 
 
-function AdminRoute() {
+interface AdminRouteProps {
+  children: ReactNode;
+}
+
+
+function AdminRoute({
+  children
+}: AdminRouteProps) {
   const [
     authenticated,
     setAuthenticated
@@ -32,41 +44,59 @@ function AdminRoute() {
   ] = useState(true);
 
 
-  useEffect(() => {
-    async function checkSession() {
-      if (!isLoggedIn()) {
-        setCheckingSession(false);
+  useEffect(
+    () => {
+      async function checkSession() {
+        if (
+          !isLoggedIn()
+        ) {
+          setCheckingSession(
+            false
+          );
 
-        return;
+          return;
+        }
+
+
+        const valid =
+          await validateSession();
+
+        setAuthenticated(
+          valid
+        );
+
+        setCheckingSession(
+          false
+        );
       }
 
-      const valid =
-        await validateSession();
 
-      setAuthenticated(
-        valid
-      );
-
-      setCheckingSession(
-        false
-      );
-    }
-
-    void checkSession();
-  }, []);
+      void checkSession();
+    },
+    []
+  );
 
 
-  if (checkingSession) {
+  if (
+    checkingSession
+  ) {
     return (
       <div
         style={{
-          minHeight: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          background: "#111827",
-          color: "white",
-          fontSize: "24px"
+          minHeight:
+            "100vh",
+          display:
+            "flex",
+          justifyContent:
+            "center",
+          alignItems:
+            "center",
+          background:
+            "#111827",
+          color:
+            "white",
+          fontSize:
+            "24px"
         }}
       >
         Loading...
@@ -75,13 +105,16 @@ function AdminRoute() {
   }
 
 
-  if (!authenticated) {
+  if (
+    !authenticated
+  ) {
     return (
       <AdminLogin
-        onLogin={() =>
-          setAuthenticated(
-            true
-          )
+        onLogin={
+          () =>
+            setAuthenticated(
+              true
+            )
         }
       />
     );
@@ -89,7 +122,11 @@ function AdminRoute() {
 
 
   return (
-    <AdminPage />
+    <>
+      {
+        children
+      }
+    </>
   );
 }
 
@@ -109,7 +146,18 @@ export default function App() {
         <Route
           path="/admin"
           element={
-            <AdminRoute />
+            <AdminRoute>
+              <AdminPage />
+            </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/admin/rosters"
+          element={
+            <AdminRoute>
+              <AdminRostersPage />
+            </AdminRoute>
           }
         />
 

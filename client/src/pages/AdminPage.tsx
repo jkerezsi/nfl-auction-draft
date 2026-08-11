@@ -6,6 +6,9 @@ import {
   updateTeam,
   deleteTeam,
 } from "../services/teamService";
+import {
+  Link
+} from "react-router-dom";
 
 import { getPlayers } from "../services/playerService";
 
@@ -31,6 +34,8 @@ import type { Player } from "../types/player";
 import type { AuctionBid } from "../types/bid";
 import TeamsPanel from
   "../components/admin/TeamsPanel";
+
+
 
 interface GameState {
   id: number;
@@ -403,6 +408,20 @@ export default function AdminPage() {
             Admin Big-Screen Board
           </p>
         </div>
+        <Link
+          to="/admin/rosters"
+          style={{
+            padding: "10px 16px",
+            border: "1px solid #60a5fa",
+            borderRadius: "8px",
+            background: "#2563eb",
+            color: "white",
+            fontWeight: 700,
+            textDecoration: "none",
+          }}
+        >
+          Show All Rosters
+        </Link>
 
         <div
           style={{
