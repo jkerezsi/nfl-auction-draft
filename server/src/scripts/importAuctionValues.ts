@@ -172,7 +172,7 @@ function parseCsv(
 }
 
 
-function ensureAuctionValueColumn() {
+function ensureAuctionValueColumns() {
   const columns =
     db
       .prepare(
@@ -205,6 +205,23 @@ function ensureAuctionValueColumn() {
       `
     );
   }
+    const hasMaxOffer =
+    columns.some(
+      column =>
+        column.name ===
+        "max_offer"
+    );
+
+  if (!hasMaxOffer) {
+    db.exec(
+      `
+      ALTER TABLE draft_players
+      ADD COLUMN max_offer
+      INTEGER NOT NULL
+      DEFAULT 0
+      `
+    );
+  }
 }
 
 
@@ -223,7 +240,7 @@ function getCsvPath() {
   return path.resolve(
     process.cwd(),
     "database",
-    "nfl_top_250_with_auction_values.csv"
+    "nfl_top_250_FERI_master.csv"
   );
 }
 
@@ -260,14 +277,16 @@ function main() {
   }
 
 
-  ensureAuctionValueColumn();
+  ensureAuctionValueColumns();
 
 
   const updatePlayer =
     db.prepare(
       `
       UPDATE draft_players
-      SET auction_value = ?
+      SET
+        auction_value = ?,
+        max_offer = ?
       WHERE
         LOWER(
           TRIM(name)
@@ -311,7 +330,8 @@ function main() {
 
           const rawValue =
             row["AUCTION VALUE"];
-
+          const rawMaxOffer =
+            row["MAX OFFER"];
 
           if (
             !name ||
@@ -327,7 +347,21 @@ function main() {
             Number(
               rawValue
             );
+          const maxOffer =
+            Number(
+              rawMaxOffer
+            );
 
+          if (
+            !Number.isInteger(
+              maxOffer
+            ) ||
+            maxOffer < 0
+          ) {
+            invalid += 1;
+
+            continue;
+          }
 
           if (
             !Number.isInteger(
@@ -344,6 +378,7 @@ function main() {
           const result =
             updatePlayer.run(
               auctionValue,
+              maxOffer,
               name,
               team
             );

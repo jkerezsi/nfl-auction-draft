@@ -42,6 +42,11 @@ interface TeamsPanelProps {
     teamId: number
   ) => void;
 
+  onToggleAutoDraft: (
+    teamId: number,
+    enabled: boolean
+  ) => void;
+
   onCancelDelete: () => void;
 
   onDeleteTeam: (
@@ -65,6 +70,7 @@ export default function TeamsPanel({
   onBeginEditing,
   onCancelEditing,
   onSaveTeam,
+  onToggleAutoDraft,
   onCancelDelete,
   onDeleteTeam
 }: TeamsPanelProps) {
@@ -316,6 +322,49 @@ export default function TeamsPanel({
                                 team.budget
                               }
                             </div>
+
+                            <label
+                              style={{
+                                display:
+                                  "flex",
+                                alignItems:
+                                  "center",
+                                gap:
+                                  "7px",
+                                marginTop:
+                                  "8px",
+                                fontSize:
+                                  "13px",
+                                cursor:
+                                  isAuctionActive
+                                    ? "not-allowed"
+                                    : "pointer",
+                                opacity:
+                                  isAuctionActive
+                                    ? 0.55
+                                    : 1
+                              }}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={
+                                  team.autoDraftEnabled === 1
+                                }
+                                disabled={
+                                  isAuctionActive ||
+                                  isDeletingTeam ||
+                                  isConfirmingDelete
+                                }
+                                onChange={
+                                  event =>
+                                    onToggleAutoDraft(
+                                      team.id,
+                                      event.target.checked
+                                    )
+                                }
+                              />
+                              Auto draft
+                            </label>
                           </div>
 
                           <div

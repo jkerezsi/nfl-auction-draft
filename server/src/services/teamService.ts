@@ -17,6 +17,7 @@ export interface Team {
   name: string;
   budget: number;
   connected: number;
+  autoDraftEnabled: number;
 }
 
 
@@ -25,6 +26,7 @@ interface TeamRow {
   name: string;
   budget: number;
   connected: number;
+  autoDraftEnabled: number;
 }
 
 
@@ -49,7 +51,8 @@ function getTeamById(
           id,
           name,
           budget,
-          connected
+          connected,
+          auto_draft_enabled AS autoDraftEnabled
         FROM teams
         WHERE id = ?
         `
@@ -171,7 +174,8 @@ export function getTeams(): Team[] {
         id,
         name,
         budget,
-        connected
+        connected,
+        auto_draft_enabled AS autoDraftEnabled
       FROM teams
       ORDER BY id ASC
       `
@@ -324,6 +328,94 @@ export function updateTeam(
   ) {
     throw new Error(
       "Could not update team"
+    );
+  }
+
+
+  const team =
+    getTeamById(
+      teamId
+    );
+
+
+  broadcastTeamUpdated({
+    type: "UPDATED",
+    team
+  });
+
+
+  broadcastGameUpdated(
+    getGameState()
+  );
+
+
+  return team;
+}
+
+
+export function setTeamAutoDraftEnabled(
+  teamId: number,
+  enabled: boolean
+): Team {
+  validateTeamId(
+    teamId
+  );
+
+
+  getTeamById(
+    teamId
+  );
+
+
+  const game =
+    db
+      .prepare(
+        `
+        SELECT
+          status
+        FROM game
+        WHERE id = 1
+        `
+      )
+      .get() as GameStatusRow | undefined;
+
+
+  if (!game) {
+    throw new Error(
+      "Game state not found"
+    );
+  }
+
+
+  if (
+    game.status === "AUCTION"
+  ) {
+    throw new Error(
+      "Auto-draft settings cannot be changed during an active auction"
+    );
+  }
+
+
+  const result =
+    db
+      .prepare(
+        `
+        UPDATE teams
+        SET auto_draft_enabled = ?
+        WHERE id = ?
+        `
+      )
+      .run(
+        enabled ? 1 : 0,
+        teamId
+      );
+
+
+  if (
+    result.changes !== 1
+  ) {
+    throw new Error(
+      "Could not update auto-draft setting"
     );
   }
 

@@ -36,8 +36,8 @@ RUN mkdir -p /app/data
 RUN mkdir -p /app/server/database /app/data
 
 COPY --from=server-build \
-  /app/server/database/nfl_top_250_with_auction_values.csv \
-  /app/server/database/nfl_top_250_with_auction_values.csv
+  /app/server/database/nfl_top_250_FERI_master.csv \
+  /app/server/database/nfl_top_250_FERI_master.csv
 
 EXPOSE 3000
 

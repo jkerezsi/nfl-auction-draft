@@ -4,6 +4,7 @@ import {
   getTeams,
   createTeam,
   updateTeam,
+  setTeamAutoDraftEnabled,
   deleteTeam,
 } from "../services/teamService";
 import {
@@ -235,6 +236,28 @@ export default function AdminPage() {
       setIsSavingTeam(false);
     }
   }
+
+  async function handleToggleAutoDraft(
+    teamId: number,
+    enabled: boolean
+  ) {
+    try {
+      setError("");
+
+      await setTeamAutoDraftEnabled(
+        teamId,
+        enabled
+      );
+
+      await loadTeams();
+    } catch (requestError: any) {
+      setError(
+        requestError.response?.data?.error ??
+          "Could not update the auto-draft setting."
+      );
+    }
+  }
+
 
   async function handleDeleteTeam(teamId: number) {
     if (deletingTeamId !== teamId) {
@@ -749,6 +772,13 @@ export default function AdminPage() {
           teamId =>
             void saveTeamName(
               teamId
+            )
+        }
+        onToggleAutoDraft={
+          (teamId, enabled) =>
+            void handleToggleAutoDraft(
+              teamId,
+              enabled
             )
         }
         onCancelDelete={

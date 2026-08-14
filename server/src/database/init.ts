@@ -59,6 +59,7 @@ export function initializeDatabase(): void {
       nfl_team TEXT,
       bye_week INTEGER,
       auction_value INTEGER NOT NULL DEFAULT 0,
+      max_offer INTEGER NOT NULL DEFAULT 0,
       drafted INTEGER NOT NULL DEFAULT 0
     );
 
@@ -192,6 +193,12 @@ export function initializeDatabase(): void {
   );
 
   addColumnIfMissing(
+    "draft_players",
+    "max_offer",
+    "INTEGER NOT NULL DEFAULT 0"
+  );
+
+  addColumnIfMissing(
     "game",
     "current_bid",
     "INTEGER NOT NULL DEFAULT 0"
@@ -222,10 +229,10 @@ export function initializeDatabase(): void {
   );
 
   addColumnIfMissing(
-  "teams",
-  "auto_draft_enabled",
-  "INTEGER NOT NULL DEFAULT 0"
-);
+    "teams",
+    "auto_draft_enabled",
+    "INTEGER NOT NULL DEFAULT 0"
+  );
 
   /*
    * Ensure the singleton game row exists.

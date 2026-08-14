@@ -12,6 +12,7 @@ import {
   createTeam,
   deleteTeam,
   getTeams,
+  setTeamAutoDraftEnabled,
   updateTeam
 } from "../../src/services/teamService";
 
@@ -89,6 +90,85 @@ describe(
             )
         ).toThrow(
           "A team with that name already exists"
+        );
+      }
+    );
+
+
+    it(
+      "enables and disables auto-draft",
+      () => {
+        const team =
+          createTeam(
+            "Auto Team"
+          );
+
+
+        expect(
+          team.autoDraftEnabled
+        ).toBe(
+          0
+        );
+
+
+        const enabled =
+          setTeamAutoDraftEnabled(
+            team.id,
+            true
+          );
+
+
+        expect(
+          enabled.autoDraftEnabled
+        ).toBe(
+          1
+        );
+
+
+        const disabled =
+          setTeamAutoDraftEnabled(
+            team.id,
+            false
+          );
+
+
+        expect(
+          disabled.autoDraftEnabled
+        ).toBe(
+          0
+        );
+      }
+    );
+
+
+    it(
+      "rejects changing auto-draft during an active auction",
+      () => {
+        const team =
+          createTeam(
+            "Auto Team"
+          );
+
+        const playerId =
+          createTestPlayer();
+
+
+        setGameState({
+          status:
+            "AUCTION",
+          currentPlayerId:
+            playerId
+        });
+
+
+        expect(
+          () =>
+            setTeamAutoDraftEnabled(
+              team.id,
+              true
+            )
+        ).toThrow(
+          "Auto-draft settings cannot be changed during an active auction"
         );
       }
     );

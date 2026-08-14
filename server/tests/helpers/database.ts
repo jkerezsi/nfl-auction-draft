@@ -11,6 +11,7 @@ export interface TestPlayerInput {
   byeWeek?: number;
   drafted?: number;
   auctionValue?: number;
+  maxOffer?: number;
 }
 
 
@@ -33,13 +34,14 @@ export function initializeTestDatabase() {
 
 
     CREATE TABLE IF NOT EXISTS teams (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      logo TEXT,
-      budget INTEGER NOT NULL,
-      connected INTEGER DEFAULT 0,
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  logo TEXT,
+  budget INTEGER NOT NULL,
+  connected INTEGER NOT NULL DEFAULT 0,
+  auto_draft_enabled INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
 
     CREATE TABLE IF NOT EXISTS settings (
@@ -49,15 +51,16 @@ export function initializeTestDatabase() {
 
 
     CREATE TABLE IF NOT EXISTS draft_players (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      rank INTEGER,
-      name TEXT NOT NULL,
-      position TEXT NOT NULL,
-      nfl_team TEXT,
-      bye_week INTEGER,
-      drafted INTEGER DEFAULT 0,
-      auction_value INTEGER NOT NULL DEFAULT 0
-    );
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  rank INTEGER,
+  name TEXT NOT NULL,
+  position TEXT NOT NULL,
+  nfl_team TEXT,
+  bye_week INTEGER,
+  auction_value INTEGER NOT NULL DEFAULT 0,
+  max_offer INTEGER NOT NULL DEFAULT 0,
+  drafted INTEGER NOT NULL DEFAULT 0
+);
 
 
     CREATE TABLE IF NOT EXISTS roster (
@@ -206,7 +209,8 @@ export function createTestPlayer(
     nflTeam = "TST",
     byeWeek = 7,
     drafted = 0,
-    auctionValue = 25
+    auctionValue = 25,
+    maxOffer = 0
   } = input;
 
 
@@ -221,10 +225,12 @@ export function createTestPlayer(
         nfl_team,
         bye_week,
         drafted,
-        auction_value
+        auction_value,
+        max_offer
       )
       VALUES
       (
+        ?,
         ?,
         ?,
         ?,
@@ -241,7 +247,8 @@ export function createTestPlayer(
       nflTeam,
       byeWeek,
       drafted,
-      auctionValue
+      auctionValue,
+      maxOffer
     );
 
 

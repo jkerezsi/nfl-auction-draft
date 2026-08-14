@@ -69,3 +69,19 @@ export async function deleteTeam(
 
   return response.data;
 }
+
+export async function setTeamAutoDraftEnabled(
+  teamId: number,
+  enabled: boolean
+): Promise<Team> {
+  const response =
+    await api.patch<Team>(
+      `/team/${teamId}/auto-draft`,
+      {
+        enabled
+      }
+    );
+
+
+  return response.data;
+}

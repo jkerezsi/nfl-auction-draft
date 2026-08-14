@@ -94,6 +94,142 @@ describe(
 
 
     it(
+      "toggles auto-draft for a team",
+      async () => {
+        const authorization =
+          await getAdminAuthorizationHeader();
+
+
+        const teamId =
+          createTestTeam(
+            "Auto Team"
+          );
+
+
+        const enableResponse =
+          await request(
+            app
+          )
+            .patch(
+              `/api/team/${teamId}/auto-draft`
+            )
+            .set(
+              "Authorization",
+              authorization
+            )
+            .send({
+              enabled:
+                true
+            });
+
+
+        expect(
+          enableResponse.status
+        ).toBe(
+          200
+        );
+
+
+        expect(
+          enableResponse.body
+            .autoDraftEnabled
+        ).toBe(
+          1
+        );
+
+
+        const disableResponse =
+          await request(
+            app
+          )
+            .patch(
+              `/api/team/${teamId}/auto-draft`
+            )
+            .set(
+              "Authorization",
+              authorization
+            )
+            .send({
+              enabled:
+                false
+            });
+
+
+        expect(
+          disableResponse.status
+        ).toBe(
+          200
+        );
+
+
+        expect(
+          disableResponse.body
+            .autoDraftEnabled
+        ).toBe(
+          0
+        );
+      }
+    );
+
+
+    it(
+      "rejects auto-draft changes during an active auction",
+      async () => {
+        const authorization =
+          await getAdminAuthorizationHeader();
+
+
+        const teamId =
+          createTestTeam(
+            "Auto Team"
+          );
+
+        const playerId =
+          createTestPlayer();
+
+
+        setGameState({
+          status:
+            "AUCTION",
+          currentPlayerId:
+            playerId
+        });
+
+
+        const response =
+          await request(
+            app
+          )
+            .patch(
+              `/api/team/${teamId}/auto-draft`
+            )
+            .set(
+              "Authorization",
+              authorization
+            )
+            .send({
+              enabled:
+                true
+            });
+
+
+        expect(
+          response.status
+        ).toBe(
+          400
+        );
+
+
+        expect(
+          response.body.error
+        ).toBe(
+          "Auto-draft settings cannot be changed during an active auction"
+        );
+      }
+    );
+
+
+    it(
       "rejects an empty team name",
       async () => {
         const authorization =

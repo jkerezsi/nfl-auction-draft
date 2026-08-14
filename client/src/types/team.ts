@@ -3,4 +3,5 @@ export interface Team {
   name: string;
   budget: number;
   connected: number;
+  autoDraftEnabled: number;
 }

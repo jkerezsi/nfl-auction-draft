@@ -6,6 +6,7 @@ import {
   getTeams,
   createTeam,
   updateTeam,
+  setTeamAutoDraftEnabled,
   deleteTeam
 } from "../services/teamService";
 
@@ -106,6 +107,57 @@ router.patch(
         updateTeam(
           teamId,
           name
+        );
+
+
+      res.json(
+        team
+      );
+    } catch (
+      error: any
+    ) {
+      res
+        .status(400)
+        .json({
+          error:
+            error.message
+        });
+    }
+  }
+);
+
+
+router.patch(
+  "/:teamId/auto-draft",
+  requireAdmin,
+  (
+    req: any,
+    res: any
+  ) => {
+    try {
+      const teamId =
+        Number(
+          req.params.teamId
+        );
+
+
+      if (
+        typeof req.body?.enabled !==
+        "boolean"
+      ) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "enabled must be a boolean"
+          });
+      }
+
+
+      const team =
+        setTeamAutoDraftEnabled(
+          teamId,
+          req.body.enabled
         );
 
 

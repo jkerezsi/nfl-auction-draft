@@ -117,7 +117,7 @@ function resolveCsvPath(): string {
     path.resolve(
       process.cwd(),
       "database",
-      "nfl_top_250_with_auction_values.csv"
+      "nfl_top_250_FERI_master.csv"
     ),
 
     // Running from repository root
@@ -125,14 +125,14 @@ function resolveCsvPath(): string {
       process.cwd(),
       "server",
       "database",
-      "nfl_top_250_with_auction_values.csv"
+      "nfl_top_250_FERI_master.csv"
     ),
 
     // Relative to compiled server files
     path.resolve(
       __dirname,
       "../../database",
-      "nfl_top_250_with_auction_values.csv"
+      "nfl_top_250_FERI_master.csv"
     )
   ].filter(
     (candidate): candidate is string =>
@@ -194,6 +194,7 @@ export function bootstrapPlayers(): PlayerBootstrapResult {
       nfl_team,
       bye_week,
       auction_value,
+      max_offer,
       drafted
     )
     VALUES (?, ?, ?, ?, ?, ?, 0)
@@ -214,6 +215,8 @@ export function bootstrapPlayers(): PlayerBootstrapResult {
         Number(row["BYE WEEK"]);
       const auctionValue =
         Number(row["AUCTION VALUE"]);
+      const maxOffer =
+        Number(row["MAX OFFER"]);
 
       if (
         !name ||
@@ -221,7 +224,9 @@ export function bootstrapPlayers(): PlayerBootstrapResult {
         !Number.isInteger(rank) ||
         rank <= 0 ||
         !Number.isInteger(auctionValue) ||
-        auctionValue < 0
+        auctionValue < 0 ||
+        !Number.isInteger(maxOffer) ||
+        maxOffer < 0
       ) {
         invalid += 1;
         continue;
@@ -235,7 +240,8 @@ export function bootstrapPlayers(): PlayerBootstrapResult {
         Number.isInteger(byeWeek)
           ? byeWeek
           : null,
-        auctionValue
+        auctionValue,
+        maxOffer
       );
 
       imported += 1;
