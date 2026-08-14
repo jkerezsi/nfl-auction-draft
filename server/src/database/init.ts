@@ -68,6 +68,7 @@ export function initializeDatabase(): void {
       logo TEXT,
       budget INTEGER NOT NULL,
       connected INTEGER NOT NULL DEFAULT 0,
+      auto_draft_enabled INTEGER NOT NULL DEFAULT 0,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
 
@@ -135,6 +136,32 @@ export function initializeDatabase(): void {
       UNIQUE(team_id, player_id)
     );
 
+    CREATE TABLE IF NOT EXISTS auto_draft_preferences (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      team_id INTEGER NOT NULL,
+      player_id INTEGER NOT NULL,
+      personal_rank INTEGER,
+      max_bid INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+      FOREIGN KEY(team_id)
+        REFERENCES teams(id)
+        ON DELETE CASCADE,
+
+      FOREIGN KEY(player_id)
+        REFERENCES draft_players(id)
+        ON DELETE CASCADE,
+
+      UNIQUE(team_id, player_id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_auto_draft_preferences_team
+      ON auto_draft_preferences(team_id);
+
+    CREATE INDEX IF NOT EXISTS idx_auto_draft_preferences_player
+      ON auto_draft_preferences(player_id);
+
     CREATE INDEX IF NOT EXISTS idx_draft_players_rank
       ON draft_players(rank);
 
@@ -150,6 +177,8 @@ export function initializeDatabase(): void {
     CREATE INDEX IF NOT EXISTS idx_auction_bids_player_id
       ON auction_bids(player_id);
   `);
+
+
 
   /*
    * Migrate databases created by earlier versions of the app.
@@ -191,6 +220,12 @@ export function initializeDatabase(): void {
     "last_winner_player_id",
     "INTEGER"
   );
+
+  addColumnIfMissing(
+  "teams",
+  "auto_draft_enabled",
+  "INTEGER NOT NULL DEFAULT 0"
+);
 
   /*
    * Ensure the singleton game row exists.
