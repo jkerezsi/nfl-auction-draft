@@ -1,3 +1,4 @@
+
 import {
   afterEach,
   beforeEach,
@@ -6,6 +7,10 @@ import {
   it,
   vi
 } from "vitest";
+
+vi.unmock(
+  "../../src/services/auctionTimerService"
+);
 
 import {
   db
