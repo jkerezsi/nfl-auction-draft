@@ -1,4 +1,8 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState
+} from "react";
 
 import {
   getTeams,
@@ -13,7 +17,6 @@ import {
 
 import { getPlayers } from "../services/playerService";
 
-import Countdown from "../components/player/Countdown";
 import PlayerCard from "../shared/PlayerCard";
 import {
   logout
@@ -36,8 +39,6 @@ import type { AuctionBid } from "../types/bid";
 import TeamsPanel from
   "../components/admin/TeamsPanel";
 
-
-
 interface GameState {
   id: number;
   status: string;
@@ -57,6 +58,211 @@ interface GameState {
 const POSITION_FILTERS = ["ALL", "QB", "RB", "WR", "TE", "K", "DST"] as const;
 
 type PositionFilter = (typeof POSITION_FILTERS)[number];
+
+interface CountdownProps {
+  seconds: number;
+  active: boolean;
+}
+
+
+function Countdown({
+  seconds,
+  active
+}: CountdownProps) {
+  const audioContextRef =
+    useRef<AudioContext | null>(null);
+
+  const previousSecondsRef =
+    useRef<number | null>(null);
+
+
+  function getAudioContext() {
+    if (audioContextRef.current) {
+      return audioContextRef.current;
+    }
+
+    const AudioContextClass =
+      window.AudioContext;
+
+    if (!AudioContextClass) {
+      return null;
+    }
+
+    const context =
+      new AudioContextClass();
+
+    audioContextRef.current =
+      context;
+
+    return context;
+  }
+
+
+  function playTick() {
+    const context =
+      getAudioContext();
+
+    if (!context) {
+      return;
+    }
+
+    if (
+      context.state ===
+      "suspended"
+    ) {
+      void context.resume();
+    }
+
+    const oscillator =
+      context.createOscillator();
+
+    const gain =
+      context.createGain();
+
+    oscillator.type =
+      "square";
+
+    oscillator.frequency.value =
+      880;
+
+    gain.gain.setValueAtTime(
+      0.0001,
+      context.currentTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+      0.08,
+      context.currentTime + 0.005
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+      0.0001,
+      context.currentTime + 0.09
+    );
+
+    oscillator.connect(gain);
+    gain.connect(context.destination);
+
+    oscillator.start();
+
+    oscillator.stop(
+      context.currentTime + 0.1
+    );
+  }
+
+
+  useEffect(
+    () => {
+      const previousSeconds =
+        previousSecondsRef.current;
+
+      if (
+        active &&
+        seconds >= 0 &&
+        seconds <= 10 &&
+        previousSeconds !== null &&
+        previousSeconds !== seconds
+      ) {
+        playTick();
+      }
+
+      previousSecondsRef.current =
+        seconds;
+    },
+    [
+      seconds,
+      active
+    ]
+  );
+
+
+  useEffect(
+    () => {
+      const unlockAudio =
+        () => {
+          const context =
+            getAudioContext();
+
+          if (
+            context &&
+            context.state ===
+              "suspended"
+          ) {
+            void context.resume();
+          }
+        };
+
+      window.addEventListener(
+        "pointerdown",
+        unlockAudio,
+        {
+          once: true
+        }
+      );
+
+      return () => {
+        window.removeEventListener(
+          "pointerdown",
+          unlockAudio
+        );
+      };
+    },
+    []
+  );
+
+
+  useEffect(
+    () => {
+      return () => {
+        if (
+          audioContextRef.current
+        ) {
+          void audioContextRef.current.close();
+        }
+      };
+    },
+    []
+  );
+
+
+  const finalCountdown =
+    active &&
+    seconds >= 0 &&
+    seconds <= 10;
+
+
+  return (
+    <div
+      style={{
+        textAlign: "center"
+      }}
+    >
+      <div
+        style={{
+          fontSize: "18px",
+          opacity: 0.7,
+          marginBottom: "6px"
+        }}
+      >
+        TIME REMAINING
+      </div>
+
+      <div
+        style={{
+          fontSize: "80px",
+          fontWeight: 700,
+          lineHeight: 1,
+          color:
+            finalCountdown
+              ? "#ef4444"
+              : "white"
+        }}
+      >
+        {seconds}
+      </div>
+    </div>
+  );
+}
 
 export default function AdminPage() {
   const [teams, setTeams] = useState<Team[]>([]);
@@ -605,7 +811,14 @@ export default function AdminPage() {
                 marginTop: "34px",
               }}
             >
-              <Countdown seconds={game.countdown} />
+              <Countdown
+                seconds={
+                  game.countdown
+                }
+                active={
+                  isAuctionActive
+                }
+              />
 
               <div>
                 <div
